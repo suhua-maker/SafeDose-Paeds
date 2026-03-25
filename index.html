@@ -1,1 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pediatric Dose Calculator</title>
+    <style>
+        :root { --primary: #1a73e8; --accent: #d93025; --bg: #f8f9fa; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); padding: 20px; line-height: 1.6; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 20px; padding-bottom: 15px; }
+        h2 { color: var(--primary); margin: 0; }
 
+        /* Input Area */
+        .patient-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; background: #f1f5f9; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #e2e8f0; }
+        .field { display: flex; flex-direction: column; }
+        label { font-size: 11px; font-weight: bold; color: #475569; text-transform: uppercase; margin-bottom: 8px; }
+        input { padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 16px; }
+        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(26,115,232,0.2); }
+
+        /* Table */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        th { background: var(--primary); color: white; padding: 15px; text-align: left; font-size: 13px; sticky: top; }
+        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        tr:hover { background-color: #f8fafc; }
+        
+        /* Result Styling */
+        .val-mg { font-weight: bold; color: var(--primary); }
+        .val-ml { font-weight: 800; color: var(--accent); background: #fff5f5; padding: 5px 10px; border-radius: 4px; border: 1px solid #fed7d7; }
+        .med-name { font-weight: bold; color: #1e293b; }
+
+        .btn-reset { background: #64748b; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-reset:hover { background: #475569; }
+        .disclaimer { font-size: 12px; color: #64748b; margin-top: 25px; padding: 15px; background: #fffbeb; border-radius: 6px; border-left: 4px solid #f59e0b; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>Clinical Dose Sheet</h2>
+        <button class="btn-reset" onclick="resetForm()">Clear All</button>
+    </div>
+
+    <div class="patient-box">
+        <div class="field">
+            <label>Age (Years)</label>
+            <input type="number" id="ageY" placeholder="Years" oninput="runCalc()">
+        </div>
+        <div class="field">
+            <label>Age (Months)</label>
+            <input type="number" id="ageM" placeholder="Months" oninput="runCalc()">
+        </div>
+        <div class="field">
+            <label>Weight (kg)</label>
+            <input type="number" id="wt" placeholder="e.g. 10.5" step="0.1" oninput="runCalc()">
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Medication Name</th>
+                    <th>Strength Available</th>
+                    <th>Dose (mg)</th>
+                    <th>Dose (mL)</th>
+                    <th>Frequency</th>
+                    <th>Clinical Notes</th>
+                </tr>
+            </thead>
+            <tbody id="medList">
+                </tbody>
+        </table>
+    </div>
+
+    <div class="disclaimer">
+        <strong>Verification:</strong> Patient Age: <span id="displayAge">0y 0m</span>. 
+        Calculations use: (Weight × Dose mg/kg) ÷ (Strength / Vol). 
+        Always confirm with double-check protocols.
+    </div>
+</div>
+
+<script>
+    // 1. ADD YOUR MEDICATIONS HERE
+    const meds = [
+        { name: "Paracetamol Syrup", strMg: 120, strMl: 5, doseKg: 15, freq: "TDS / QID", note: "Max 4 doses in 24h" },
+        { name: "Ibuprofen Syrup", strMg: 100, strMl: 5, doseKg: 10, freq: "TDS", note: "Take after food" },
+        { name: "Amoxicillin Susp", strMg: 125, strMl: 5, doseKg: 15, freq: "TDS", note: "Complete 7-day course" },
+        { name: "Cetirizine Syrup", strMg: 5, strMl: 5, doseKg: 0.25, freq: "OD", note: "Preferably at night" },
+        { name: "Peditral / ORS", strMg: 0, strMl: 1, doseKg: 50, freq: "PRN", note: "Replace fluid loss" }
+    ];
+
+    // 2. BUILD THE TABLE
+    function buildTable() {
+        const tbody = document.getElementById('medList');
+        tbody.innerHTML = meds.map((m, i) => `
+            <tr>
+                <td class="med-name">${m.name}</td>
+                <td>${m.strMg}mg / ${m.strMl}mL</td>
+                <td><span id="mg-${i}" class="val-mg">0 mg</span></td>
+                <td><span id="ml-${i}" class="val-ml">0 mL</span></td>
+                <td>${m.freq}</td>
+                <td><small>${m.note}</small></td>
+            </tr>
+        `).join('');
+    }
+
+    // 3. DO THE MATH
+    function runCalc() {
+        const weight = parseFloat(document.getElementById('wt').value) || 0;
+        const y = document.getElementById('ageY').value || 0;
+        const m = document.getElementById('ageM').value || 0;
+        
+        document.getElementById('displayAge').innerText = y + "y " + m + "m";
+
+        meds.forEach((med, i) => {
+            const mgSpan = document.getElementById(`mg-${i}`);
+            const mlSpan = document.getElementById(`ml-${i}`);
+
+            if (weight > 0) {
+                const totalMg = weight * med.doseKg;
+                const conc = med.strMg / med.strMl; // concentration per 1mL
+                const totalMl = totalMg / conc;
+
+                mgSpan.innerText = totalMg.toFixed(1) + " mg";
+                mlSpan.innerText = totalMl.toFixed(2) + " mL";
+            } else {
+                mgSpan.innerText = "0 mg";
+                mlSpan.innerText = "0 mL";
+            }
+        });
+    }
+
+    function resetForm() {
+        document.querySelectorAll('input').forEach(i => i.value = '');
+        runCalc();
+    }
+
+    // Initialize on load
+    window.onload = buildTable;
+</script>
+
+</body>
+</html>
