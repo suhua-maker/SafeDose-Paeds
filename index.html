@@ -3,56 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dose Calculator</title>
+    <title>Professional Dose Calculator</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #f4f7f6; }
-        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        .input-group { margin-bottom: 1rem; }
-        label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
-        input { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .result-box { margin-top: 1.5rem; padding: 1rem; background: #e7f3ff; border-radius: 4px; text-align: center; }
-        #result { font-size: 1.2rem; font-weight: bold; color: #007bff; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        h2 { color: #1a73e8; border-bottom: 2px solid #e8f0fe; padding-bottom: 10px; }
+        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background-color: #f8f9fa; color: #5f6368; text-align: left; padding: 12px; border-bottom: 2px solid #dee2e6; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        .highlight { font-weight: bold; color: #1a73e8; }
+        .disclaimer { font-size: 0.8rem; color: #d93025; margin-top: 20px; font-style: italic; }
     </style>
 </head>
 <body>
 
-<div class="card">
+<div class="container">
     <h2>Dose Calculator</h2>
     
-    <div class="input-group">
-        <label>Patient Weight (kg)</label>
-        <input type="number" id="weight" placeholder="e.g. 70" oninput="calculateDose()">
+    <div class="grid-inputs">
+        <div>
+            <label>Patient Age (Years)</label>
+            <input type="number" id="age" placeholder="e.g. 5" oninput="calculate()">
+        </div>
+        <div>
+            <label>Patient Weight (kg)</label>
+            <input type="number" id="weight" placeholder="e.g. 20" oninput="calculate()">
+        </div>
+        <div>
+            <label>Required Dosage (mg/kg)</label>
+            <input type="number" id="dosage" placeholder="e.g. 15" oninput="calculate()">
+        </div>
+        <div>
+            <label>Concentration (mg/mL)</label>
+            <input type="number" id="concentration" placeholder="e.g. 50" oninput="calculate()">
+        </div>
     </div>
 
-    <div class="input-group">
-        <label>Dosage (mg/kg)</label>
-        <input type="number" id="dosage" placeholder="e.g. 5" oninput="calculateDose()">
-    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Dose (mg)</th>
+                <th>Dose (mL)</th>
+                <th>Frequency</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="resMg" class="highlight">0 mg</td>
+                <td id="resMl" class="highlight">0 mL</td>
+                <td>
+                    <select id="freq" onchange="calculate()">
+                        <option value="Once Daily">Once Daily (OD)</option>
+                        <option value="Twice Daily">Twice Daily (BD)</option>
+                        <option value="Three times Daily">Three times (TDS)</option>
+                        <option value="Every 6 hours">Four times (QID)</option>
+                    </select>
+                </td>
+                <td><input type="text" id="notes" placeholder="e.g. After food"></td>
+            </tr>
+        </tbody>
+    </table>
 
-    <div class="input-group">
-        <label>Concentration (mg/mL)</label>
-        <input type="number" id="concentration" placeholder="e.g. 50" oninput="calculateDose()">
-    </div>
-
-    <div class="result-box">
-        <div>Total Volume to Administer:</div>
-        <div id="result">0 mL</div>
-    </div>
+    <p class="disclaimer">⚠️ For clinical reference only. Always verify calculations manually before administration.</p>
 </div>
 
 <script>
-    function calculateDose() {
-        const weight = document.getElementById('weight').value;
-        const dosage = document.getElementById('dosage').value;
-        const concentration = document.getElementById('concentration').value;
-        const resultDisplay = document.getElementById('result');
+    function calculate() {
+        const weight = parseFloat(document.getElementById('weight').value);
+        const dosage = parseFloat(document.getElementById('dosage').value);
+        const concentration = parseFloat(document.getElementById('concentration').value);
+        
+        if (weight > 0 && dosage > 0 && concentration > 0) {
+            const mgResult = weight * dosage;
+            const mlResult = mgResult / concentration;
 
-        if (weight && dosage && concentration && concentration > 0) {
-            // Formula: (Weight * Dosage) / Concentration
-            const totalDose = (weight * dosage) / concentration;
-            resultDisplay.innerText = totalDose.toFixed(2) + " mL";
+            document.getElementById('resMg').innerText = mgResult.toFixed(1) + " mg";
+            document.getElementById('resMl').innerText = mlResult.toFixed(2) + " mL";
         } else {
-            resultDisplay.innerText = "0 mL";
+            document.getElementById('resMg').innerText = "0 mg";
+            document.getElementById('resMl').innerText = "0 mL";
         }
     }
 </script>
