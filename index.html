@@ -67,10 +67,10 @@
 </div>
 
 <script>
-    // UPDATED REGISTRY: Forte renamed to Suspension
+    // Paracetamol Forte renamed to Paracetamol Suspension
     const medicationRegistry = [
         { id: "pcm_syr", name: "Paracetamol Syrup", str: "120mg/5mL", mg: 120, ml: 5, freq: "TDS/QID", note: "Max 60mg/kg/day" },
-        { id: "pcm_susp", name: "Paracetamol Suspension", str: "250mg/5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Standard paediatric dose" },
+        { id: "pcm_susp", name: "Paracetamol Suspension", str: "250mg/5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Standard dose" },
         { id: "pcm_supp", name: "Paracetamol Suppository", str: "125mg / 250mg", mg: 0, ml: 0, freq: "PRN", note: "Max 4 doses/24h" },
         { id: "ibu", name: "Ibuprofen Syrup", str: "100mg/5mL", mg: 100, ml: 5, freq: "TDS", note: "Post-meal" },
         { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
@@ -87,7 +87,7 @@
                 <td class="res-mg"><span id="mg-${m.id}">0</span> mg</td>
                 <td class="res-ml"><span id="ml-${m.id}">0</span></td>
                 <td>${m.freq}</td>
-                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">Pending Calculate...</span></td>
+                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">Pending...</span></td>
             </tr>
         `).join('');
     }
@@ -106,9 +106,8 @@
             let finalMl = "0.00";
             let ruleText = "";
 
-            // --- Calculation Logic ---
+            // PARACETAMOL LOGIC (Maintained 15mg/kg formula)
             if (med.id === "pcm_syr" || med.id === "pcm_susp") {
-                // Formula: Wt * 15mg/kg
                 finalMg = w * 15;
                 finalMl = ((finalMg / med.mg) * med.ml).toFixed(2) + " mL";
                 ruleText = "Formula: 15mg/kg";
@@ -117,7 +116,7 @@
             else if (med.id === "pcm_supp") {
                 finalMg = w * 30;
                 finalMl = "-";
-                ruleText = "Formula: 30mg/kg (Choose 125mg/250mg)";
+                ruleText = "Formula: 30mg/kg";
             }
 
             else if (med.id === "ibu") {
@@ -129,10 +128,10 @@
             else if (med.id === "alben") {
                 if (y < 2) {
                     finalMg = 200; finalMl = "5.00 mL";
-                    ruleText = "Rule: < 2yrs (200mg STAT)";
+                    ruleText = "Rule: < 2yrs (200mg)";
                 } else {
                     finalMg = 400; finalMl = "10.00 mL";
-                    ruleText = "Rule: >= 2yrs (400mg STAT)";
+                    ruleText = "Rule: >= 2yrs (400mg)";
                 }
             }
 
