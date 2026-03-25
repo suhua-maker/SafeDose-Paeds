@@ -67,8 +67,10 @@
 </div>
 
 <script>
+    // UPDATED REGISTRY: Forte renamed to Suspension
     const medicationRegistry = [
-        { id: "pcm_syr", name: "Paracetamol Syrup", str: "250mg/5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Max 60mg/kg/day" },
+        { id: "pcm_syr", name: "Paracetamol Syrup", str: "120mg/5mL", mg: 120, ml: 5, freq: "TDS/QID", note: "Max 60mg/kg/day" },
+        { id: "pcm_susp", name: "Paracetamol Suspension", str: "250mg/5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Standard paediatric dose" },
         { id: "pcm_supp", name: "Paracetamol Suppository", str: "125mg / 250mg", mg: 0, ml: 0, freq: "PRN", note: "Max 4 doses/24h" },
         { id: "ibu", name: "Ibuprofen Syrup", str: "100mg/5mL", mg: 100, ml: 5, freq: "TDS", note: "Post-meal" },
         { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
@@ -104,15 +106,15 @@
             let finalMl = "0.00";
             let ruleText = "";
 
-            if (med.id === "pcm_syr") {
-                // Formula: Wt * 15mg/kg | Strength: 250mg/5ml
+            // --- Calculation Logic ---
+            if (med.id === "pcm_syr" || med.id === "pcm_susp") {
+                // Formula: Wt * 15mg/kg
                 finalMg = w * 15;
-                finalMl = ((finalMg / 250) * 5).toFixed(2) + " mL";
+                finalMl = ((finalMg / med.mg) * med.ml).toFixed(2) + " mL";
                 ruleText = "Formula: 15mg/kg";
             } 
             
             else if (med.id === "pcm_supp") {
-                // Formula: Wt * 30mg/kg | No mL
                 finalMg = w * 30;
                 finalMl = "-";
                 ruleText = "Formula: 30mg/kg (Choose 125mg/250mg)";
