@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KKP9 Paeds Dose Calculator</title>
+    <title>KKP9 Paediatric Dose Auto Calculation Sheet</title>
     <style>
         :root { --primary: #0056b3; --accent: #d93025; --bg: #f8fafc; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); padding: 20px; }
@@ -30,13 +30,15 @@
         .res-mg { font-weight: bold; color: var(--primary); font-size: 1.1em; }
         .res-ml { font-weight: 800; color: var(--accent); background: #fff5f5; padding: 6px 10px; border-radius: 6px; border: 1px solid #fed7d7; font-size: 1.2em; }
         .med-name { font-weight: bold; color: #0f172a; }
-        .rule-badge { font-size: 10px; color: #64748b; background: #f1f5f9; padding: 2px 5px; border-radius: 4px; display: block; margin-top: 5px; }
+        .rule-badge { font-size: 10px; color: #64748b; background: #f1f5f9; padding: 2px 5px; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2 style="margin-top:0; color: #1e293b;">Paeds Dose Calculator (KKP9 2025)</h2>
+    <h2 style="margin-top:0; color: #1e293b; border-bottom: 2px solid var(--primary); padding-bottom: 10px;">
+        KKP9 Paediatric Dose Auto Calculation Sheet
+    </h2>
 
     <div class="header-bar">
         <div class="field"><label>Weight (kg)</label><input type="number" id="wt" step="0.1" placeholder="0.0"></div>
@@ -69,15 +71,14 @@
 </div>
 
 <script>
-    // FORMULA LIST BASED ON YOUR EXCEL
+    // MEDICATION LIST FROM YOUR EXCEL DATA
     const medicationRegistry = [
-        { id: "para", name: "Paracetamol Syrup", str: "120mg/5mL", mg: 120, ml: 5, freq: "TDS/QID", note: "Max 4 doses/24h" },
-        { id: "paraforte", name: "Paracetamol Forte", str: "250mg/5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Standard dose" },
+        { id: "pcm_syr", name: "Paracetamol Syrup", str: "120mg/5mL", mg: 120, ml: 5, freq: "TDS/QID", note: "Max 60mg/kg/day" },
+        { id: "pcm_forte", name: "Paracetamol Forte", str: "250mg/5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Standard paediatric dose" },
         { id: "ibu", name: "Ibuprofen Syrup", str: "100mg/5mL", mg: 100, ml: 5, freq: "TDS", note: "Post-meal" },
-        { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", mg: 125, ml: 5, freq: "TDS", note: "Finish course" },
+        { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
         { id: "cpm", name: "Chlorpheniramine", str: "2mg/5mL", mg: 2, ml: 5, freq: "TDS", note: "Max 12mg/day" },
-        { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", mg: 200, ml: 5, freq: "STAT", note: "Age-based fixed dose" },
-        { id: "malto", name: "Maltofer Syrup", str: "50mg/5mL", mg: 50, ml: 5, freq: "OD/BD", note: "Iron Supplement" }
+        { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", mg: 200, ml: 5, freq: "STAT", note: "Age-dependent dose" }
     ];
 
     function init() {
@@ -89,7 +90,7 @@
                 <td class="res-mg"><span id="mg-${m.id}">0</span> mg</td>
                 <td class="res-ml"><span id="ml-${m.id}">0</span> mL</td>
                 <td>${m.freq}</td>
-                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">No weight entered</span></td>
+                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">Input weight & click Calculate</span></td>
             </tr>
         `).join('');
     }
@@ -98,32 +99,43 @@
         const w = parseFloat(document.getElementById('wt').value) || 0;
         const y = parseFloat(document.getElementById('ageY').value) || 0;
 
-        if (w <= 0) { alert("Key in weight!"); return; }
+        if (w <= 0) { 
+            alert("Please key in weight first!"); 
+            return; 
+        }
 
         medicationRegistry.forEach(med => {
             let finalMg = 0;
             let finalMl = 0;
             let ruleText = "";
 
-            // --- CUSTOM FORMULAS FOR EACH MEDICATION ---
+            // --- SPECIFIC FORMULA LOGIC ---
             
-            if (med.id === "para" || med.id === "paraforte") {
-                finalMg = w * 15; // Formula 1: Weight * 15
-                finalMl = (finalMg / med.mg) * med.ml; // Formula 2: Conversion to mL
+            if (med.id === "pcm_syr" || med.id === "pcm_forte") {
+                // Formula for mg: Weight * 15
+                finalMg = w * 15; 
+                // Formula for ml: (mg / StrengthMg) * StrengthMl
+                finalMl = (finalMg / med.mg) * med.ml; 
                 ruleText = "Formula: 15mg/kg";
             } 
             
             else if (med.id === "ibu") {
                 finalMg = w * 10;
-                finalMl = (finalMg / med.mg) * med.ml;
+                finalMl = (finalMg / 100) * 5;
                 ruleText = "Formula: 10mg/kg";
             }
 
             else if (med.id === "alben") {
-                // Example of age-based fixed dose from your sheet
-                finalMg = (y < 2) ? 200 : 400; 
-                finalMl = (finalMg / 200) * 5;
-                ruleText = (y < 2) ? "Rule: < 2yrs (200mg)" : "Rule: >= 2yrs (400mg)";
+                // Example of age-based logic
+                if (y < 2) {
+                    finalMg = 200; 
+                    finalMl = 5;
+                    ruleText = "Rule: < 2yrs (200mg STAT)";
+                } else {
+                    finalMg = 400; 
+                    finalMl = 10;
+                    ruleText = "Rule: >= 2yrs (400mg STAT)";
+                }
             }
 
             else if (med.id === "cpm") {
@@ -133,13 +145,13 @@
             }
 
             else {
-                // Default fallback formula
+                // Default fallback
                 finalMg = w * 15;
                 finalMl = (finalMg / med.mg) * med.ml;
                 ruleText = "Formula: Standard 15mg/kg";
             }
 
-            // --- UPDATE THE UI ---
+            // --- UPDATE RESULTS ---
             document.getElementById(`mg-${med.id}`).innerText = finalMg.toFixed(1);
             document.getElementById(`ml-${med.id}`).innerText = finalMl.toFixed(2);
             document.getElementById(`rule-${med.id}`).innerText = ruleText;
