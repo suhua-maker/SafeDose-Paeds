@@ -1,83 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KKP9 Paediatric Dose Auto Calculation Sheet</title>
+    <style>
+        :root { --primary: #0056b3; --accent: #d93025; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); padding: 20px; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        .header-bar { display: flex; flex-wrap: wrap; gap: 15px; background: #eef2f7; padding: 20px; border-radius: 10px; align-items: flex-end; margin-bottom: 25px; border: 1px solid #d1d9e6; }
+        .field { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 11px; font-weight: bold; color: #475569; text-transform: uppercase; }
+        input { padding: 10px; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 16px; width: 100px; text-align: center; }
+
+        .btn-calculate { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .btn-calculate:hover { background: #004494; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: var(--primary); color: white; padding: 12px; text-align: left; font-size: 13px; text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid #edf2f7; font-size: 14px; }
+        tr:nth-child(even) { background: #f8fafc; }
+        
+        .res-mg { font-weight: bold; color: var(--primary); }
+        .res-ml { font-weight: bold; color: var(--accent); background: #fff5f5; padding: 4px 8px; border-radius: 4px; border: 1px solid #fed7d7; }
+        .rule-badge { font-size: 10px; color: #64748b; display: block; margin-top: 4px; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 style="margin-top:0; color: #1e293b; border-bottom: 2px solid var(--primary); padding-bottom: 10px;">
+        KKP9 Paediatric Dose Auto Calculation Sheet
+    </h2>
+
+    <div class="header-bar">
+        <div class="field"><label>Weight (kg)</label><input type="number" id="input_wt" step="0.1" placeholder="0.0"></div>
+        <div class="field"><label>Age (Yrs)</label><input type="number" id="input_ageY" placeholder="0"></div>
+        <div class="field"><label>Age (Mths)</label><input type="number" id="input_ageM" placeholder="0"></div>
+        
+        <button class="btn-calculate" onclick="runCalc()">
+            <span>🔄</span> CALCULATE
+        </button>
+        
+        <button onclick="window.location.reload()" style="background:none; border:none; color:#64748b; text-decoration:underline; cursor:pointer; font-size:13px;">Reset All</button>
+    </div>
+
+    <div style="overflow-x:auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%">Medication Name</th>
+                    <th>Strength</th>
+                    <th>Rec. Dose (mg)</th>
+                    <th>Rec. Dose (mL)</th>
+                    <th>Frequency</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody id="medTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
 <script>
-    // 1. UPDATED MEDICATION REGISTRY (REORDERED)
+    // Ordered List: Syrup first, then Suppository
     const medicationRegistry = [
         { id: "pcm_syr", name: "Paracetamol Syrup", str: "250mg / 5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Max 60mg/kg/day" },
-        { id: "pcm_supp", name: "Paracetamol Suppository", str: "125mg / 250mg", mg: 0, ml: 0, freq: "PRN", note: "Max 4 doses/24h. Round to nearest size." },
-        { id: "ibu", name: "Ibuprofen Syrup", str: "100mg/5mL", mg: 100, ml: 5, freq: "TDS", note: "Post-meal" },
-        { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
-        { id: "cpm", name: "Chlorpheniramine", str: "2mg/5mL", mg: 2, ml: 5, freq: "TDS", note: "Max 12mg/day" },
-        { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", mg: 200, ml: 5, freq: "STAT", note: "Age-dependent dose" }
+        { id: "pcm_supp", name: "Paracetamol Suppository", str: "125mg / 250mg", mg: 0, ml: 0, freq: "PRN", note: "Max 4 doses/24h" },
+        { id: "ibu", name: "Ibuprofen Syrup", str: "100mg / 5mL", mg: 100, ml: 5, freq: "TDS", note: "Post-meal" },
+        { id: "amox", name: "Amoxicillin Syr", str: "125mg / 5mL", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
+        { id: "cpm", name: "Chlorpheniramine", str: "2mg / 5mL", mg: 2, ml: 5, freq: "TDS", note: "Max 12mg/day" }
     ];
 
-    function init() {
+    function initTable() {
         const body = document.getElementById('medTableBody');
         body.innerHTML = medicationRegistry.map((m) => `
             <tr>
-                <td class="med-name">${m.name}</td>
+                <td><strong>${m.name}</strong></td>
                 <td>${m.str}</td>
                 <td class="res-mg"><span id="mg-${m.id}">0</span> mg</td>
                 <td class="res-ml"><span id="ml-${m.id}">0</span> mL</td>
                 <td>${m.freq}</td>
-                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">Input weight & click Calculate</span></td>
+                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">Pending input...</span></td>
             </tr>
         `).join('');
     }
 
     function runCalc() {
-        const w = parseFloat(document.getElementById('wt').value) || 0;
-        const y = parseFloat(document.getElementById('ageY').value) || 0;
+        // Get Inputs correctly using specific IDs
+        const w = parseFloat(document.getElementById('input_wt').value) || 0;
+        const y = parseFloat(document.getElementById('input_ageY').value) || 0;
 
-        if (w <= 0) { 
-            alert("Please key in weight first!"); 
-            return; 
+        if (w <= 0) {
+            alert("Please enter a valid weight (kg).");
+            return;
         }
 
         medicationRegistry.forEach(med => {
             let finalMg = 0;
-            let finalMl = "-"; 
+            let finalMl = "-";
             let ruleText = "";
 
-            // --- SPECIFIC FORMULA LOGIC ---
-            
-            // 1. Paracetamol Syrup (First Row)
+            // 1. Paracetamol Syrup (15mg/kg)
             if (med.id === "pcm_syr") {
-                finalMg = w * 15; 
-                finalMl = ((finalMg / 250) * 5).toFixed(2); 
+                finalMg = w * 15;
+                finalMl = ((finalMg / 250) * 5).toFixed(2) + " mL";
                 ruleText = "Formula: 15mg/kg";
             } 
             
-            // 2. Paracetamol Suppository (Second Row)
+            // 2. Paracetamol Suppository (30mg/kg)
             else if (med.id === "pcm_supp") {
-                finalMg = w * 30; 
-                finalMl = "-";    
-                ruleText = "Formula: 30mg/kg (Check 125mg vs 250mg size)";
-            } 
+                finalMg = w * 30;
+                finalMl = "-"; // As per instruction
+                ruleText = "Formula: 30mg/kg (Check 125mg/250mg)";
+            }
 
+            // 3. Ibuprofen (10mg/kg)
             else if (med.id === "ibu") {
                 finalMg = w * 10;
-                finalMl = ((finalMg / 100) * 5).toFixed(2);
+                finalMl = ((finalMg / 100) * 5).toFixed(2) + " mL";
                 ruleText = "Formula: 10mg/kg";
             }
 
-            else if (med.id === "alben") {
-                if (y < 2) {
-                    finalMg = 200; 
-                    finalMl = "5.00";
-                    ruleText = "Rule: < 2yrs (200mg STAT)";
-                } else {
-                    finalMg = 400; 
-                    finalMl = "10.00";
-                    ruleText = "Rule: >= 2yrs (400mg STAT)";
-                }
-            }
-
+            // 4. CPM (0.1mg/kg)
             else if (med.id === "cpm") {
                 finalMg = w * 0.1;
-                finalMl = ((finalMg / 2) * 5).toFixed(2);
+                finalMl = ((finalMg / 2) * 5).toFixed(2) + " mL";
                 ruleText = "Formula: 0.1mg/kg";
             }
 
-            // --- UPDATE RESULTS ---
+            // 5. Default calculation for others
+            else {
+                finalMg = w * 15;
+                finalMl = med.mg > 0 ? ((finalMg / med.mg) * med.ml).toFixed(2) + " mL" : "-";
+                ruleText = "Standard calculation";
+            }
+
+            // Update HTML safely
             document.getElementById(`mg-${med.id}`).innerText = finalMg.toFixed(1);
             document.getElementById(`ml-${med.id}`).innerText = finalMl;
-            document
+            document.getElementById(`rule-${med.id}`).innerText = ruleText;
+        });
+    }
+
+    // Load table when page opens
+    window.onload = initTable;
+</script>
+
+</body>
+</html>
