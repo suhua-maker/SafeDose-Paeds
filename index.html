@@ -9,18 +9,15 @@
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); padding: 20px; }
         .container { max-width: 1200px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         
-        /* Top Bar */
         .header-bar { display: flex; flex-wrap: wrap; gap: 20px; background: #eef2f7; padding: 25px; border-radius: 10px; align-items: flex-end; margin-bottom: 25px; border: 1px solid #d1d9e6; }
         .field { display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 11px; font-weight: bold; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
         input { padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 18px; width: 120px; text-align: center; font-weight: bold; }
 
-        /* Calculate Button */
         .btn-calculate { background: var(--primary); color: white; border: none; padding: 14px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: transform 0.1s; }
         .btn-calculate:hover { background: #004494; }
         .btn-calculate:active { transform: scale(0.97); }
 
-        /* Table */
         .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; }
         table { width: 100%; border-collapse: collapse; min-width: 1000px; }
         th { background: var(--primary); color: white; padding: 15px; text-align: left; font-size: 13px; text-transform: uppercase; position: sticky; top: 0; }
@@ -64,17 +61,15 @@
                     <th>Notes</th>
                 </tr>
             </thead>
-            <tbody id="medTableBody">
-                </tbody>
+            <tbody id="medTableBody"></tbody>
         </table>
     </div>
 </div>
 
 <script>
-    // MEDICATION LIST FROM YOUR EXCEL DATA
     const medicationRegistry = [
-        { id: "pcm_syr", name: "Paracetamol Syrup", str: "120mg/5mL", mg: 120, ml: 5, freq: "TDS/QID", note: "Max 60mg/kg/day" },
-        { id: "pcm_forte", name: "Paracetamol Forte", str: "250mg/5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Standard paediatric dose" },
+        { id: "pcm_syr", name: "Paracetamol Syrup", str: "250mg/5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Max 60mg/kg/day" },
+        { id: "pcm_supp", name: "Paracetamol Suppository", str: "125mg / 250mg", mg: 0, ml: 0, freq: "PRN", note: "Max 4 doses/24h" },
         { id: "ibu", name: "Ibuprofen Syrup", str: "100mg/5mL", mg: 100, ml: 5, freq: "TDS", note: "Post-meal" },
         { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
         { id: "cpm", name: "Chlorpheniramine", str: "2mg/5mL", mg: 2, ml: 5, freq: "TDS", note: "Max 12mg/day" },
@@ -88,9 +83,9 @@
                 <td class="med-name">${m.name}</td>
                 <td>${m.str}</td>
                 <td class="res-mg"><span id="mg-${m.id}">0</span> mg</td>
-                <td class="res-ml"><span id="ml-${m.id}">0</span> mL</td>
+                <td class="res-ml"><span id="ml-${m.id}">0</span></td>
                 <td>${m.freq}</td>
-                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">Input weight & click Calculate</span></td>
+                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">Pending Calculate...</span></td>
             </tr>
         `).join('');
     }
@@ -106,60 +101,58 @@
 
         medicationRegistry.forEach(med => {
             let finalMg = 0;
-            let finalMl = 0;
+            let finalMl = "0.00";
             let ruleText = "";
 
-            // --- SPECIFIC FORMULA LOGIC ---
-            
-            if (med.id === "pcm_syr" || med.id === "pcm_forte") {
-                // Formula for mg: Weight * 15
-                finalMg = w * 15; 
-                // Formula for ml: (mg / StrengthMg) * StrengthMl
-                finalMl = (finalMg / med.mg) * med.ml; 
+            if (med.id === "pcm_syr") {
+                // Formula: Wt * 15mg/kg | Strength: 250mg/5ml
+                finalMg = w * 15;
+                finalMl = ((finalMg / 250) * 5).toFixed(2) + " mL";
                 ruleText = "Formula: 15mg/kg";
             } 
             
+            else if (med.id === "pcm_supp") {
+                // Formula: Wt * 30mg/kg | No mL
+                finalMg = w * 30;
+                finalMl = "-";
+                ruleText = "Formula: 30mg/kg (Choose 125mg/250mg)";
+            }
+
             else if (med.id === "ibu") {
                 finalMg = w * 10;
-                finalMl = (finalMg / 100) * 5;
+                finalMl = ((finalMg / 100) * 5).toFixed(2) + " mL";
                 ruleText = "Formula: 10mg/kg";
             }
 
             else if (med.id === "alben") {
-                // Example of age-based logic
                 if (y < 2) {
-                    finalMg = 200; 
-                    finalMl = 5;
+                    finalMg = 200; finalMl = "5.00 mL";
                     ruleText = "Rule: < 2yrs (200mg STAT)";
                 } else {
-                    finalMg = 400; 
-                    finalMl = 10;
+                    finalMg = 400; finalMl = "10.00 mL";
                     ruleText = "Rule: >= 2yrs (400mg STAT)";
                 }
             }
 
             else if (med.id === "cpm") {
                 finalMg = w * 0.1;
-                finalMl = (finalMg / 2) * 5;
+                finalMl = ((finalMg / 2) * 5).toFixed(2) + " mL";
                 ruleText = "Formula: 0.1mg/kg";
             }
 
             else {
-                // Default fallback
                 finalMg = w * 15;
-                finalMl = (finalMg / med.mg) * med.ml;
-                ruleText = "Formula: Standard 15mg/kg";
+                finalMl = ((finalMg / med.mg) * med.ml).toFixed(2) + " mL";
+                ruleText = "Standard 15mg/kg";
             }
 
-            // --- UPDATE RESULTS ---
             document.getElementById(`mg-${med.id}`).innerText = finalMg.toFixed(1);
-            document.getElementById(`ml-${med.id}`).innerText = finalMl.toFixed(2);
+            document.getElementById(`ml-${med.id}`).innerText = finalMl;
             document.getElementById(`rule-${med.id}`).innerText = ruleText;
         });
     }
 
     window.onload = init;
 </script>
-
 </body>
 </html>
