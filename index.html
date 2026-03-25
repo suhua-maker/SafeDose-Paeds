@@ -14,10 +14,9 @@
         .field { display: flex; flex-direction: column; gap: 8px; }
         label { font-size: 11px; font-weight: bold; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
         input { padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 18px; width: 120px; text-align: center; font-weight: bold; }
-        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(0,86,179,0.1); }
 
         /* Calculate Button */
-        .btn-calculate { background: var(--primary); color: white; border: none; padding: 14px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: transform 0.1s, background 0.2s; }
+        .btn-calculate { background: var(--primary); color: white; border: none; padding: 14px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: transform 0.1s; }
         .btn-calculate:hover { background: #004494; }
         .btn-calculate:active { transform: scale(0.97); }
 
@@ -27,20 +26,17 @@
         th { background: var(--primary); color: white; padding: 15px; text-align: left; font-size: 13px; text-transform: uppercase; position: sticky; top: 0; }
         td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #1e293b; }
         tr:nth-child(even) { background: #f8fafc; }
-        tr:hover { background: #f1f5f9; }
-
-        /* Calculation Styling */
-        .res-mg { font-weight: bold; color: var(--primary); font-size: 1.1em; }
-        .res-ml { font-weight: 800; color: var(--accent); background: #fff5f5; padding: 6px 10px; border-radius: 6px; border: 1px solid #fed7d7; font-size: 1.2em; display: inline-block; }
-        .med-name { font-weight: bold; color: #0f172a; }
         
-        #searchBox { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 15px; }
+        .res-mg { font-weight: bold; color: var(--primary); font-size: 1.1em; }
+        .res-ml { font-weight: 800; color: var(--accent); background: #fff5f5; padding: 6px 10px; border-radius: 6px; border: 1px solid #fed7d7; font-size: 1.2em; }
+        .med-name { font-weight: bold; color: #0f172a; }
+        .rule-badge { font-size: 10px; color: #64748b; background: #f1f5f9; padding: 2px 5px; border-radius: 4px; display: block; margin-top: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2 style="margin-top:0; color: #1e293b;">Paeds Dose Calculator (KKP9 2025 Ver)</h2>
+    <h2 style="margin-top:0; color: #1e293b;">Paeds Dose Calculator (KKP9 2025)</h2>
 
     <div class="header-bar">
         <div class="field"><label>Weight (kg)</label><input type="number" id="wt" step="0.1" placeholder="0.0"></div>
@@ -51,17 +47,15 @@
             <span>🔄</span> CALCULATE
         </button>
         
-        <button onclick="window.location.reload()" style="background:none; border:none; color:#64748b; text-decoration:underline; cursor:pointer; font-size:14px;">Reset</button>
+        <button onclick="window.location.reload()" style="background:none; border:none; color:#64748b; text-decoration:underline; cursor:pointer; font-size:14px;">Reset All</button>
     </div>
-
-    <input type="text" id="searchBox" placeholder="Search medication name..." onkeyup="filterTable()">
 
     <div class="table-container">
         <table>
             <thead>
                 <tr>
                     <th style="width: 25%">Medication Name</th>
-                    <th>Strength Available</th>
+                    <th>Strength</th>
                     <th>Recommended Dose (mg)</th>
                     <th>Recommended Dose (mL)</th>
                     <th>Frequency</th>
@@ -75,64 +69,80 @@
 </div>
 
 <script>
-    // EXACT DATA AND FORMULAS FROM YOUR EXCEL FILE
-    const meds = [
-        { name: "Paracetamol Syr", str: "120mg/5mL", mg: 120, ml: 5, doseKg: 15, freq: "TDS/QID", note: "Max 60mg/kg/day" },
-        { name: "Paracetamol Forte", str: "250mg/5mL", mg: 250, ml: 5, doseKg: 15, freq: "TDS/QID", note: "Max 4 doses/24h" },
-        { name: "Ibuprofen Syr", str: "100mg/5mL", mg: 100, ml: 5, doseKg: 10, freq: "TDS", note: "Post-meal" },
-        { name: "Amoxicillin Syr", str: "125mg/5mL", mg: 125, ml: 5, doseKg: 15, freq: "TDS", note: "5-7 days course" },
-        { name: "Amoxicillin Forte", str: "250mg/5mL", mg: 250, ml: 5, doseKg: 15, freq: "TDS", note: "Standard dose" },
-        { name: "Cloxacillin Syr", str: "125mg/5mL", mg: 125, ml: 5, doseKg: 12.5, freq: "QID", note: "Empty stomach" },
-        { name: "Cephalexin Syr", str: "125mg/5mL", mg: 125, ml: 5, doseKg: 12.5, freq: "BD/QID", note: "Skin infections" },
-        { name: "Metronidazole Susp", str: "200mg/5mL", mg: 200, ml: 5, doseKg: 7.5, freq: "TDS", note: "Anaerobic infx" },
-        { name: "Salbutamol Syrup", str: "2mg/5mL", mg: 2, ml: 5, doseKg: 0.1, freq: "TDS", note: "Monitor HR" },
-        { name: "Promethazine Syr", str: "5mg/5mL", mg: 5, ml: 5, doseKg: 0.25, freq: "BD/TDS", note: "Antihistamine" },
-        { name: "Chlorpheniramine (CPM)", str: "2mg/5mL", mg: 2, ml: 5, doseKg: 0.1, freq: "TDS", note: "Max 12mg/day" },
-        { name: "Cetirizine Syr", str: "5mg/5mL", mg: 5, ml: 5, doseKg: 0.25, freq: "OD", note: "> 6mo old" },
-        { name: "Loratadine Syr", str: "5mg/5mL", mg: 5, ml: 5, doseKg: 0.25, freq: "OD", note: "> 2yrs old" },
-        { name: "Guaiphenesin Syr", str: "100mg/5mL", mg: 100, ml: 5, doseKg: 5, freq: "TDS", note: "Expectorant" },
-        { name: "Dextromethorphan Syr", str: "15mg/5mL", mg: 15, ml: 5, doseKg: 0.2, freq: "TDS", note: "Antitussive" }
+    // FORMULA LIST BASED ON YOUR EXCEL
+    const medicationRegistry = [
+        { id: "para", name: "Paracetamol Syrup", str: "120mg/5mL", mg: 120, ml: 5, freq: "TDS/QID", note: "Max 4 doses/24h" },
+        { id: "paraforte", name: "Paracetamol Forte", str: "250mg/5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Standard dose" },
+        { id: "ibu", name: "Ibuprofen Syrup", str: "100mg/5mL", mg: 100, ml: 5, freq: "TDS", note: "Post-meal" },
+        { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", mg: 125, ml: 5, freq: "TDS", note: "Finish course" },
+        { id: "cpm", name: "Chlorpheniramine", str: "2mg/5mL", mg: 2, ml: 5, freq: "TDS", note: "Max 12mg/day" },
+        { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", mg: 200, ml: 5, freq: "STAT", note: "Age-based fixed dose" },
+        { id: "malto", name: "Maltofer Syrup", str: "50mg/5mL", mg: 50, ml: 5, freq: "OD/BD", note: "Iron Supplement" }
     ];
 
     function init() {
         const body = document.getElementById('medTableBody');
-        body.innerHTML = meds.map((m, i) => `
-            <tr class="med-row">
+        body.innerHTML = medicationRegistry.map((m) => `
+            <tr>
                 <td class="med-name">${m.name}</td>
                 <td>${m.str}</td>
-                <td class="res-mg"><span id="mg-${i}">0</span> mg</td>
-                <td class="res-ml"><span id="ml-${i}">0</span> mL</td>
+                <td class="res-mg"><span id="mg-${m.id}">0</span> mg</td>
+                <td class="res-ml"><span id="ml-${m.id}">0</span> mL</td>
                 <td>${m.freq}</td>
-                <td><small>${m.note}</small></td>
+                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">No weight entered</span></td>
             </tr>
         `).join('');
     }
 
     function runCalc() {
-        const w = parseFloat(document.getElementById('wt').value);
-        if (isNaN(w) || w <= 0) {
-            alert("Please key in weight first!");
-            return;
-        }
+        const w = parseFloat(document.getElementById('wt').value) || 0;
+        const y = parseFloat(document.getElementById('ageY').value) || 0;
 
-        meds.forEach((m, i) => {
-            // Formula for MG: Weight * doseKg
-            const finalMg = w * m.doseKg;
+        if (w <= 0) { alert("Key in weight!"); return; }
+
+        medicationRegistry.forEach(med => {
+            let finalMg = 0;
+            let finalMl = 0;
+            let ruleText = "";
+
+            // --- CUSTOM FORMULAS FOR EACH MEDICATION ---
             
-            // Formula for ML: (FinalMg / StrengthMg) * StrengthMl
-            const finalMl = (finalMg / m.mg) * m.ml;
+            if (med.id === "para" || med.id === "paraforte") {
+                finalMg = w * 15; // Formula 1: Weight * 15
+                finalMl = (finalMg / med.mg) * med.ml; // Formula 2: Conversion to mL
+                ruleText = "Formula: 15mg/kg";
+            } 
+            
+            else if (med.id === "ibu") {
+                finalMg = w * 10;
+                finalMl = (finalMg / med.mg) * med.ml;
+                ruleText = "Formula: 10mg/kg";
+            }
 
-            document.getElementById(`mg-${i}`).innerText = finalMg.toFixed(1);
-            document.getElementById(`ml-${i}`).innerText = finalMl.toFixed(2);
-        });
-    }
+            else if (med.id === "alben") {
+                // Example of age-based fixed dose from your sheet
+                finalMg = (y < 2) ? 200 : 400; 
+                finalMl = (finalMg / 200) * 5;
+                ruleText = (y < 2) ? "Rule: < 2yrs (200mg)" : "Rule: >= 2yrs (400mg)";
+            }
 
-    function filterTable() {
-        const input = document.getElementById("searchBox").value.toLowerCase();
-        const rows = document.querySelectorAll(".med-row");
-        rows.forEach(row => {
-            const text = row.querySelector(".med-name").innerText.toLowerCase();
-            row.style.display = text.includes(input) ? "" : "none";
+            else if (med.id === "cpm") {
+                finalMg = w * 0.1;
+                finalMl = (finalMg / 2) * 5;
+                ruleText = "Formula: 0.1mg/kg";
+            }
+
+            else {
+                // Default fallback formula
+                finalMg = w * 15;
+                finalMl = (finalMg / med.mg) * med.ml;
+                ruleText = "Formula: Standard 15mg/kg";
+            }
+
+            // --- UPDATE THE UI ---
+            document.getElementById(`mg-${med.id}`).innerText = finalMg.toFixed(1);
+            document.getElementById(`ml-${med.id}`).innerText = finalMl.toFixed(2);
+            document.getElementById(`rule-${med.id}`).innerText = ruleText;
         });
     }
 
