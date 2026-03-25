@@ -1,0 +1,88 @@
+<script>
+    // 1. UPDATED MEDICATION REGISTRY (REORDERED)
+    const medicationRegistry = [
+        { id: "pcm_syr", name: "Paracetamol Syrup", str: "250mg / 5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Max 60mg/kg/day" },
+        { id: "pcm_supp", name: "Paracetamol Suppository", str: "125mg / 250mg", mg: 0, ml: 0, freq: "PRN", note: "Max 4 doses/24h. Round to nearest size." },
+        { id: "ibu", name: "Ibuprofen Syrup", str: "100mg/5mL", mg: 100, ml: 5, freq: "TDS", note: "Post-meal" },
+        { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
+        { id: "cpm", name: "Chlorpheniramine", str: "2mg/5mL", mg: 2, ml: 5, freq: "TDS", note: "Max 12mg/day" },
+        { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", mg: 200, ml: 5, freq: "STAT", note: "Age-dependent dose" }
+    ];
+
+    function init() {
+        const body = document.getElementById('medTableBody');
+        body.innerHTML = medicationRegistry.map((m) => `
+            <tr>
+                <td class="med-name">${m.name}</td>
+                <td>${m.str}</td>
+                <td class="res-mg"><span id="mg-${m.id}">0</span> mg</td>
+                <td class="res-ml"><span id="ml-${m.id}">0</span> mL</td>
+                <td>${m.freq}</td>
+                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">Input weight & click Calculate</span></td>
+            </tr>
+        `).join('');
+    }
+
+    function runCalc() {
+        const w = parseFloat(document.getElementById('wt').value) || 0;
+        const y = parseFloat(document.getElementById('ageY').value) || 0;
+
+        if (w <= 0) { 
+            alert("Please key in weight first!"); 
+            return; 
+        }
+
+        medicationRegistry.forEach(med => {
+            let finalMg = 0;
+            let finalMl = "-"; 
+            let ruleText = "";
+
+            // --- SPECIFIC FORMULA LOGIC ---
+            
+            // 1. Paracetamol Syrup (First Row)
+            if (med.id === "pcm_syr") {
+                finalMg = w * 15; 
+                finalMl = ((finalMg / 250) * 5).toFixed(2); 
+                ruleText = "Formula: 15mg/kg";
+            } 
+            
+            // 2. Paracetamol Suppository (Second Row)
+            else if (med.id === "pcm_supp") {
+                finalMg = w * 30; 
+                finalMl = "-";    
+                ruleText = "Formula: 30mg/kg (Check 125mg vs 250mg size)";
+            } 
+
+            else if (med.id === "ibu") {
+                finalMg = w * 10;
+                finalMl = ((finalMg / 100) * 5).toFixed(2);
+                ruleText = "Formula: 10mg/kg";
+            }
+
+            else if (med.id === "alben") {
+                if (y < 2) {
+                    finalMg = 200; 
+                    finalMl = "5.00";
+                    ruleText = "Rule: < 2yrs (200mg STAT)";
+                } else {
+                    finalMg = 400; 
+                    finalMl = "10.00";
+                    ruleText = "Rule: >= 2yrs (400mg STAT)";
+                }
+            }
+
+            else if (med.id === "cpm") {
+                finalMg = w * 0.1;
+                finalMl = ((finalMg / 2) * 5).toFixed(2);
+                ruleText = "Formula: 0.1mg/kg";
+            }
+
+            // --- UPDATE RESULTS ---
+            document.getElementById(`mg-${med.id}`).innerText = finalMg.toFixed(1);
+            document.getElementById(`ml-${med.id}`).innerText = finalMl;
+            document.getElementById(`rule-${med.id}`).innerText = ruleText;
+        });
+    }
+
+    window.onload = init;
+</script>
