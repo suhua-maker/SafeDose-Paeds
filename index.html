@@ -67,7 +67,7 @@
 </div>
 
 <script>
-    // Paracetamol Syrup 120mg removed. Suspension (250mg) is now first.
+    // Paracetamol Syrup (120mg) completely removed.
     const medicationRegistry = [
         { id: "pcm_susp", name: "Paracetamol Suspension", str: "250mg/5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Standard paediatric dose" },
         { id: "pcm_supp", name: "Paracetamol Suppository", str: "125mg / 250mg", mg: 0, ml: 0, freq: "PRN", note: "Max 4 doses/24h" },
@@ -86,7 +86,7 @@
                 <td class="res-mg"><span id="mg-${m.id}">0</span> mg</td>
                 <td class="res-ml"><span id="ml-${m.id}">0</span></td>
                 <td>${m.freq}</td>
-                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">Input values & click Calculate</span></td>
+                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">Pending Calculate...</span></td>
             </tr>
         `).join('');
     }
@@ -106,17 +106,16 @@
             let ruleText = "";
 
             if (med.id === "pcm_susp") {
-                // Formula: Wt * 15mg/kg | Strength: 250mg/5mL
+                // Maintained 15mg/kg formula for the 250mg Suspension
                 finalMg = w * 15;
                 finalMl = ((finalMg / 250) * 5).toFixed(2) + " mL";
                 ruleText = "Formula: 15mg/kg";
             } 
             
             else if (med.id === "pcm_supp") {
-                // Formula: Wt * 30mg/kg | No mL column
                 finalMg = w * 30;
                 finalMl = "-";
-                ruleText = "Formula: 30mg/kg (Choose size)";
+                ruleText = "Formula: 30mg/kg";
             }
 
             else if (med.id === "ibu") {
@@ -144,7 +143,7 @@
             else {
                 finalMg = w * 15;
                 finalMl = ((finalMg / med.mg) * med.ml).toFixed(2) + " mL";
-                ruleText = "Standard 15mg/kg";
+                ruleText = "Standard Calculation";
             }
 
             document.getElementById(`mg-${med.id}`).innerText = finalMg.toFixed(1);
