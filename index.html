@@ -67,9 +67,8 @@
 </div>
 
 <script>
-    // Paracetamol Syrup (120mg) completely removed.
     const medicationRegistry = [
-        { id: "pcm_susp", name: "Paracetamol Suspension", str: "250mg/5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Standard paediatric dose" },
+        { id: "pcm_susp", name: "Paracetamol Suspension", str: "250mg/5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Adult dose=1000mg/dose." },
         { id: "pcm_supp", name: "Paracetamol Suppository", str: "125mg / 250mg", mg: 0, ml: 0, freq: "PRN", note: "Max 4 doses/24h" },
         { id: "ibu", name: "Ibuprofen Syrup", str: "100mg/5mL", mg: 100, ml: 5, freq: "TDS", note: "Post-meal" },
         { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
@@ -86,7 +85,7 @@
                 <td class="res-mg"><span id="mg-${m.id}">0</span> mg</td>
                 <td class="res-ml"><span id="ml-${m.id}">0</span></td>
                 <td>${m.freq}</td>
-                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">Pending Calculate...</span></td>
+                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">Pending...</span></td>
             </tr>
         `).join('');
     }
@@ -106,7 +105,6 @@
             let ruleText = "";
 
             if (med.id === "pcm_susp") {
-                // Maintained 15mg/kg formula for the 250mg Suspension
                 finalMg = w * 15;
                 finalMl = ((finalMg / 250) * 5).toFixed(2) + " mL";
                 ruleText = "Formula: 15mg/kg";
