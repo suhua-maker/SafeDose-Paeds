@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>KKP9 Paeds Dose 2025</title>
+    <title>KKP9 Paediatric Dose Auto Calculator</title>
     <style>
         body { font-family: sans-serif; padding: 20px; background-color: #f0f2f5; }
         .wrapper { max-width: 900px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
@@ -21,7 +21,7 @@
 
 <div class="wrapper">
     <div class="status-ok">● System Ready (Script Loaded)</div>
-    <h2>KKP9 Pediatric Dose Calculator</h2>
+    <h2>KKP9 Paediatric Dose Auto Calculator</h2>
     
     <div class="input-box">
         <div>
@@ -42,13 +42,13 @@
             <tr>
                 <th>Medication</th>
                 <th>Strength</th>
-                <th>Dose (mg)</th>
-                <th>Dose (mL)</th>
+                <th>Recommended Dose (mg)</th>
+                <th>Recommended Dose (mL)</th>
             </tr>
         </thead>
         <tbody id="DRUG_TABLE">
             <tr class="drug-item" data-mg="250" data-ml="5" data-dosekg="15">
-                <td><b>Paracetamol 250</b></td>
+                <td><b>Paracetamol Suspension</b></td>
                 <td>250mg/5mL</td>
                 <td><span class="out-mg">0</span> mg</td>
                 <td><span class="out-ml">0</span> mL</td>
@@ -117,3 +117,15 @@
         var rows = document.getElementsByClassName('drug-item');
         for (var k = 0; k < rows.length; k++) {
             var drugName = rows[k].getElementsByTagName('td')[0].innerText.toLowerCase();
+            if (drugName.indexOf(searchTerm) > -1) {
+                rows[k].style.display = "";
+            } else {
+                rows[k].style.display = "none";
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
+
