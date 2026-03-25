@@ -3,58 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KKP9 Pediatric Dose Calculator</title>
+    <title>KKP9 Pediatric Dose Auto-Calculator</title>
     <style>
-        :root { --primary: #0056b3; --accent: #d93025; --bg: #fdfdfd; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; padding: 20px; }
+        :root { --primary: #0056b3; --accent: #d93025; --bg: #f4f7f9; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); padding: 20px; color: #333; }
         .container { max-width: 1200px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); margin-bottom: 25px; padding-bottom: 10px; }
-        h1 { color: var(--primary); margin: 0; font-size: 24px; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); margin-bottom: 25px; padding-bottom: 15px; }
+        h1 { color: var(--primary); margin: 0; font-size: 22px; text-transform: uppercase; }
 
         /* Input Area */
-        .patient-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; background: #f8fafc; padding: 25px; border-radius: 10px; margin-bottom: 30px; border: 1px solid #e2e8f0; }
+        .patient-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; background: #eef2f7; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
         .field { display: flex; flex-direction: column; }
-        label { font-size: 12px; font-weight: bold; color: #475569; text-transform: uppercase; margin-bottom: 8px; }
-        input { padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 16px; font-weight: bold; }
-        input:focus { border-color: var(--primary); outline: none; }
+        label { font-size: 11px; font-weight: bold; color: #4a5568; text-transform: uppercase; margin-bottom: 5px; }
+        input { padding: 10px; border: 2px solid #cbd5e0; border-radius: 6px; font-size: 16px; font-weight: bold; text-align: center; }
+        input:focus { border-color: var(--primary); outline: none; background: #fff; }
 
         /* Table */
-        .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid #eee; }
-        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
-        th { background: var(--primary); color: white; padding: 15px; text-align: left; font-size: 13px; text-transform: uppercase; position: sticky; top: 0; }
-        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #334155; }
-        tr:nth-child(even) { background-color: #f9fbff; }
+        .table-container { overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; min-width: 950px; }
+        th { background: var(--primary); color: white; padding: 12px; text-align: left; font-size: 12px; position: sticky; top: 0; }
+        td { padding: 12px; border-bottom: 1px solid #edf2f7; font-size: 14px; }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        tr:hover { background-color: #f1f5f9; }
         
-        .med-name { font-weight: bold; color: #1e293b; }
-        .val-mg { font-weight: bold; color: var(--primary); font-size: 1.1rem; }
-        .val-ml { font-weight: bold; color: var(--accent); background: #fff5f5; padding: 6px 12px; border-radius: 6px; border: 1px solid #fed7d7; font-size: 1.1rem; }
+        /* Calculated Values */
+        .med-name { font-weight: bold; color: #2d3748; }
+        .val-mg { font-weight: bold; color: var(--primary); }
+        .val-ml { font-weight: 800; color: var(--accent); background: #fff5f5; padding: 4px 8px; border-radius: 4px; border: 1px solid #fed7d7; }
 
-        .btn-clear { background: #64748b; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-clear:hover { background: #334155; }
-        .footer { margin-top: 30px; padding: 20px; background: #fffbeb; border-radius: 10px; border-left: 5px solid #f59e0b; font-size: 13px; }
+        .btn-clear { background: #e53e3e; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .footer-note { margin-top: 25px; padding: 15px; background: #fffaf0; border-left: 5px solid #ed8936; font-size: 12px; color: #718096; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1>KKP9 Paeds Dose Auto-Calculation Sheet</h1>
-        <button class="btn-clear" onclick="resetForm()">CLEAR ALL</button>
+        <h1>KKP9 Paeds Dose Sheet (2025 Ver)</h1>
+        <button class="btn-clear" onclick="resetAll()">RESET</button>
     </div>
 
     <div class="patient-info">
         <div class="field">
             <label>Age (Years)</label>
-            <input type="number" id="ageY" placeholder="Yrs" oninput="calculateAll()">
+            <input type="number" id="ageY" placeholder="0" oninput="calc()">
         </div>
         <div class="field">
             <label>Age (Months)</label>
-            <input type="number" id="ageM" placeholder="Mths" oninput="calculateAll()">
+            <input type="number" id="ageM" placeholder="0" oninput="calc()">
         </div>
         <div class="field">
             <label>Body Weight (kg)</label>
-            <input type="number" id="weight" placeholder="0.00" step="0.1" oninput="calculateAll()">
+            <input type="number" id="wt" placeholder="0.0" step="0.1" oninput="calc()">
         </div>
     </div>
 
@@ -62,86 +63,93 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 20%;">Medication Name</th>
+                    <th style="width: 25%">Medication Name</th>
                     <th>Strength Available</th>
-                    <th>Recommended Dose (mg)</th>
-                    <th>Recommended Dose (mL)</th>
+                    <th>Rec. Dose (mg)</th>
+                    <th>Rec. Dose (mL)</th>
                     <th>Frequency</th>
-                    <th>Notes</th>
+                    <th>Notes / Max Dose</th>
                 </tr>
             </thead>
-            <tbody id="medBody">
+            <tbody id="medList">
                 </tbody>
         </table>
     </div>
 
-    <div class="footer">
-        <strong>Countercheck Info:</strong> Patient Age: <span id="ageText">0y 0m</span> | Weight: <span id="weightText">0</span> kg<br>
-        <small>*Calculations are based on the latest KKP9 Reference protocols. Always verify for high-risk medications.</small>
+    <div class="footer-note">
+        <strong>Verification:</strong> Patient Age: <span id="vAge">0y 0m</span> | Weight: <span id="vWt">0</span> kg.
+        <br><em>*Formula: (Weight × mg/kg) / (Strength mg / Strength mL). Please countercheck with the physical 2025 KKP9 guide.</em>
     </div>
 </div>
 
 <script>
-    // DATA SOURCE: Extracted from your "Full List" Excel Tab
-    const medicationData = [
-        { name: "Paracetamol (Syr)", str: "120mg/5mL", mg: 120, ml: 5, doseKg: 15, freq: "TDS/QID", note: "Max 4 doses/24h" },
-        { name: "Paracetamol (Syr Forte)", str: "250mg/5mL", mg: 250, ml: 5, doseKg: 15, freq: "TDS/QID", note: "Max 4 doses/24h" },
-        { name: "Ibuprofen (Syr)", str: "100mg/5mL", mg: 100, ml: 5, doseKg: 10, freq: "TDS", note: "After Food" },
-        { name: "Chlorpheniramine (Syr)", str: "2mg/5mL", mg: 2, ml: 5, doseKg: 0.1, freq: "TDS", note: "Sedating" },
-        { name: "Amoxicillin (Syr)", str: "125mg/5mL", mg: 125, ml: 5, doseKg: 15, freq: "TDS", note: "Finish course" },
-        { name: "Promethazine (Syr)", str: "5mg/5mL", mg: 5, ml: 5, doseKg: 0.25, freq: "TDS/BD", note: "Antiemetic/Antihistamine" },
-        { name: "Salbutamol (Syr)", str: "2mg/5mL", mg: 2, ml: 5, doseKg: 0.1, freq: "TDS", note: "Check for tremors" },
-        { name: "Cetirizine (Syr)", str: "5mg/5mL", mg: 5, ml: 5, doseKg: 0.25, freq: "OD", note: "Non-sedating" }
+    // List mapped from your "Full List" Excel Tab
+    const medicationRegistry = [
+        { name: "Paracetamol (Syr)", str: "120mg / 5mL", mg: 120, ml: 5, doseKg: 15, freq: "TDS/QID", note: "Max 60mg/kg/day" },
+        { name: "Paracetamol (Forte)", str: "250mg / 5mL", mg: 250, ml: 5, doseKg: 15, freq: "TDS/QID", note: "Max 4 doses/day" },
+        { name: "Ibuprofen", str: "100mg / 5mL", mg: 100, ml: 5, doseKg: 10, freq: "TDS", note: "Post-meal" },
+        { name: "Chlorpheniramine (Piriton)", str: "2mg / 5mL", mg: 2, ml: 5, doseKg: 0.1, freq: "TDS", note: "Max 12mg/day" },
+        { name: "Amoxicillin", str: "125mg / 5mL", mg: 125, ml: 5, doseKg: 15, freq: "TDS", note: "Complete course" },
+        { name: "Amoxicillin (Forte)", str: "250mg / 5mL", mg: 250, ml: 5, doseKg: 15, freq: "TDS", note: "Standard dose" },
+        { name: "Cephalexin", str: "125mg / 5mL", mg: 125, ml: 5, doseKg: 12.5, freq: "BD/QID", note: "Skin/Soft tissue" },
+        { name: "Cloxacillin", str: "125mg / 5mL", mg: 125, ml: 5, doseKg: 12.5, freq: "QID", note: "Empty stomach" },
+        { name: "Metronidazole", str: "200mg / 5mL", mg: 200, ml: 5, doseKg: 7.5, freq: "TDS", note: "Anaerobic infx" },
+        { name: "Salbutamol", str: "2mg / 5mL", mg: 2, ml: 5, doseKg: 0.1, freq: "TDS", note: "Monitor HR" },
+        { name: "Promethazine", str: "5mg / 5mL", mg: 5, ml: 5, doseKg: 0.25, freq: "BD/TDS", note: "Antihistamine" },
+        { name: "Cetirizine", str: "5mg / 5mL", mg: 5, ml: 5, doseKg: 0.25, freq: "OD", note: "6mo and above" },
+        { name: "Loratadine", str: "5mg / 5mL", mg: 5, ml: 5, doseKg: 0.25, freq: "OD", note: "2yrs and above" },
+        { name: "Guaiphenesin", str: "100mg / 5mL", mg: 100, ml: 5, doseKg: 5, freq: "TDS", note: "Expectorant" },
+        { name: "Dextromethorphan", str: "15mg / 5mL", mg: 15, ml: 5, doseKg: 0.2, freq: "TDS", note: "Antitussive" }
     ];
 
-    function initTable() {
-        const tbody = document.getElementById('medBody');
-        tbody.innerHTML = medicationData.map((med, i) => `
+    function buildTable() {
+        const table = document.getElementById('medList');
+        table.innerHTML = medicationRegistry.map((m, i) => `
             <tr>
-                <td class="med-name">${med.name}</td>
-                <td>${med.str}</td>
+                <td class="med-name">${m.name}</td>
+                <td>${m.str}</td>
                 <td><span id="mg-${i}" class="val-mg">0 mg</span></td>
                 <td><span id="ml-${i}" class="val-ml">0 mL</span></td>
-                <td>${med.freq}</td>
-                <td><small>${med.note}</small></td>
+                <td>${m.freq}</td>
+                <td><small>${m.note}</small></td>
             </tr>
         `).join('');
     }
 
-    function calculateAll() {
-        const wt = parseFloat(document.getElementById('weight').value) || 0;
-        const yrs = document.getElementById('ageY').value || 0;
-        const mths = document.getElementById('ageM').value || 0;
+    function calc() {
+        const w = parseFloat(document.getElementById('wt').value) || 0;
+        const y = document.getElementById('ageY').value || 0;
+        const m = document.getElementById('ageM').value || 0;
 
-        document.getElementById('ageText').innerText = yrs + "y " + mths + "m";
-        document.getElementById('weightText').innerText = wt;
+        document.getElementById('vAge').innerText = y + "y " + m + "m";
+        document.getElementById('vWt').innerText = w;
 
-        medicationData.forEach((med, i) => {
-            const mgEl = document.getElementById(`mg-${i}`);
-            const mlEl = document.getElementById(`ml-${i}`);
+        medicationRegistry.forEach((med, i) => {
+            const mgSpan = document.getElementById(`mg-${i}`);
+            const mlSpan = document.getElementById(`ml-${i}`);
 
-            if (wt > 0) {
-                const totalMg = wt * med.doseKg;
-                const totalMl = totalMg / (med.mg / med.ml);
-                
-                mgEl.innerText = totalMg.toFixed(1) + " mg";
-                mlEl.innerText = totalMl.toFixed(2) + " mL";
+            if (w > 0) {
+                const totalMg = w * med.doseKg;
+                const conc = med.mg / med.ml;
+                const totalMl = totalMg / conc;
+
+                mgSpan.innerText = totalMg.toFixed(1) + " mg";
+                mlSpan.innerText = totalMl.toFixed(2) + " mL";
             } else {
-                mgEl.innerText = "0 mg";
-                mlEl.innerText = "0 mL";
+                mgSpan.innerText = "0 mg";
+                mlSpan.innerText = "0 mL";
             }
         });
     }
 
-    function resetForm() {
-        document.getElementById('weight').value = '';
+    function resetAll() {
+        document.getElementById('wt').value = '';
         document.getElementById('ageY').value = '';
         document.getElementById('ageM').value = '';
-        calculateAll();
+        calc();
     }
 
-    // Run on startup
-    window.onload = initTable;
+    window.onload = buildTable;
 </script>
 
 </body>
