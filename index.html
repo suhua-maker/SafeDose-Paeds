@@ -94,11 +94,11 @@
             id: "pcm_supp", 
             name: "Paracetamol Suppository", 
             str: "125mg / 250mg", 
-            range: "FUKKM\nADULT & CHILDREN more than 12 years old: 500mg - 1g every 4-6 hours\nCHILD 6 - 12 years : 250 - 500 mg; 1 - 5 years : 125 - 250 mg; 3 - 11 months : 80 mg inserted every 4 - 6 hours if necessary.", 
+            range: "FUKKM\nADULT & CHILDREN > 12y: 500mg-1g every 4-6h\nCHILD 6-12y: 250-500mg; 1-5y: 125-250mg;\n3-11m: 80mg every 4-6h if necessary.", 
             mg: 0, 
             ml: 0, 
             freq: "PRN", 
-            note: "Maximum 4 doses in 24 hours.\nInfants under 3 months should not be given Paracetamol unless advised by doctor; a dose of 10 mg/kg (5 mg/kg if jaundiced) is suitable." 
+            note: "Maximum 4 doses in 24 hours.\nInfants <3m: 10mg/kg (5mg/kg if jaundiced)." 
         },
         { 
             id: "dph_syr", 
@@ -124,7 +124,7 @@
             id: "lorat_syr", 
             name: "Loratadine Syrup", 
             str: "5mg/5mL", 
-            range: "FUKKM: CHILD >6y: 10mg OD; 2-6y: 5mg OD\nPRODUCT LEAFLET / MIMS:\n>30kg: 10mg OD\n<=30kg: 5mg OD", 
+            range: "FUKKM: CHILD >6y: 10mg OD; 2-6y: 5mg OD\nPRODUCT LEAFLET / MIMS:\n>30kg: 10mg OD; <=30kg: 5mg OD", 
             mg: 5, 
             ml: 5, 
             freq: "OD", 
@@ -134,14 +134,23 @@
             id: "brom_syr", 
             name: "Bromhexine Syrup", 
             str: "4mg/5mL", 
-            range: "FUKKM\nBy body weight: 0.3 mg/kg/day 8 hourly\nBased on age:\n6-12y: 4mg TDS; 2-6y: 2mg TDS; <2y: 1mg TDS", 
+            range: "FUKKM\nBy weight: 0.3 mg/kg/day 8 hourly\nAge: 6-12y: 4mg TDS; 2-6y: 2mg TDS; <2y: 1mg TDS", 
             mg: 4, 
             ml: 5, 
             freq: "TDS", 
             note: "-" 
         },
+        { 
+            id: "cpm_syr", 
+            name: "Chlorpheniramine Syrup", 
+            str: "2mg/5mL", 
+            range: "FUKKM\nCHILD 2 - 5 years : 1 mg every 4 - 6 hours (max 6 mg daily)\n6 - 12 years : 2 mg every 4 - 6 hours (max 12 mg daily)", 
+            mg: 2, 
+            ml: 5, 
+            freq: "TDS", 
+            note: "Contraindicated for use in children under 2-year-old" 
+        },
         { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", range: "15mg/kg", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
-        { id: "cpm", name: "Chlorpheniramine", str: "2mg/5mL", range: "0.1mg/kg", mg: 2, ml: 5, freq: "TDS", note: "Max 12mg/day" },
         { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", range: "Age dependent", mg: 200, ml: 5, freq: "STAT", note: "Age-dependent dose" }
     ];
 
@@ -152,7 +161,7 @@
                 <td class="med-name">${m.name}</td>
                 <td>${m.str}</td>
                 <td class="dose-range-text">${m.range}</td>
-                <td class="res-mg"><span id="mg-${m.id}">0</span> mg</td>
+                <td class="res-mg"><span id="mg-${m.id}">0</span></td>
                 <td class="res-ml"><span id="ml-${m.id}">0</span></td>
                 <td>${m.freq}</td>
                 <td class="notes-text">${m.note}<span class="rule-badge" id="rule-${m.id}">Pending...</span></td>
@@ -192,12 +201,12 @@
                 ruleText = "Formula: 30mg/kg";
             }
             else if (med.id === "dph_syr") {
-                if (y < 2) { finalMg = "CONTRA"; finalMl = "CONTRA"; ruleText = "Age < 2yrs"; }
+                if (y < 2) { finalMg = "CONTRAINDICATED"; finalMl = "CONTRAINDICATED"; ruleText = "Age < 2yrs"; }
                 else if (y < 6) { finalMg = "-"; finalMl = Math.min((w * 5 / 7), 2.5).toFixed(2) + " mL"; ruleText = "Age 2-6 (Max 2.5mL)"; }
                 else { finalMg = "-"; finalMl = Math.min((w * 5 / 7), 5).toFixed(2) + " mL"; ruleText = "Age 6+ (Max 5mL)"; }
             }
             else if (med.id === "prom_syr") {
-                if (y < 2) { finalMg = "CONTRA"; finalMl = "CONTRA"; ruleText = "Age < 2yrs"; }
+                if (y < 2) { finalMg = "CONTRAINDICATED"; finalMl = "CONTRAINDICATED"; ruleText = "Age < 2yrs"; }
                 else {
                     let mgVal = Math.min(0.3 * w, 8);
                     finalMg = mgVal.toFixed(1) + " mg";
@@ -212,30 +221,38 @@
                 ruleText = (y > 6) ? `Age > 6y (${w <= 30 ? '<=30kg' : '>30kg'})` : "Age <= 6y (Standard)";
             }
             else if (med.id === "brom_syr") {
-                if (y < 2) {
-                    finalMg = "0.96 mg";
-                    finalMl = "1.20 mL";
-                    ruleText = "Age < 2y (Fixed)";
+                if (y < 2) { finalMg = "0.96 mg"; finalMl = "1.20 mL"; ruleText = "Age < 2y (Fixed)"; }
+                else if (y < 6) { 
+                    let mgV = Math.min(0.3 * w, 2);
+                    finalMg = mgV.toFixed(1) + " mg"; 
+                    finalMl = (mgV * 5 / 4).toFixed(2) + " mL"; 
+                    ruleText = "Age 2-6 (Max 2mg)"; 
+                }
+                else { 
+                    let mgV = Math.min(0.3 * w, 4);
+                    finalMg = mgV.toFixed(1) + " mg"; 
+                    finalMl = (mgV * 5 / 4).toFixed(2) + " mL"; 
+                    ruleText = "Age 6-12 (Max 4mg)"; 
+                }
+            }
+            else if (med.id === "cpm_syr") {
+                if (y < 2) { 
+                    finalMg = "CONTRAINDICATED"; finalMl = "CONTRAINDICATED"; ruleText = "Age < 2yrs"; 
                 } else if (y < 6) {
-                    let mgVal = Math.min(0.3 * w, 2);
-                    finalMg = mgVal.toFixed(1) + " mg";
-                    finalMl = ((mgVal / 4) * 5).toFixed(2) + " mL";
-                    ruleText = "Age 2-6 (Max 2mg)";
+                    let mgV = Math.min(0.1 * w, 1);
+                    finalMg = mgV.toFixed(1) + " mg";
+                    finalMl = (mgV * 5 / 2).toFixed(2) + " mL";
+                    ruleText = "Age 2-6 (Max 1mg)";
                 } else {
-                    let mgVal = Math.min(0.3 * w, 4);
-                    finalMg = mgVal.toFixed(1) + " mg";
-                    finalMl = ((mgVal / 4) * 5).toFixed(2) + " mL";
-                    ruleText = "Age 6-12 (Max 4mg)";
+                    let mgV = Math.min(0.1 * w, 2);
+                    finalMg = mgV.toFixed(1) + " mg";
+                    finalMl = (mgV * 5 / 2).toFixed(2) + " mL";
+                    ruleText = "Age 6+ (Max 2mg)";
                 }
             }
             else if (med.id === "alben") {
                 if (y < 2) { finalMg = "200.0 mg"; finalMl = "5.00 mL"; ruleText = "Rule: < 2yrs (200mg)"; }
                 else { finalMg = "400.0 mg"; finalMl = "10.00 mL"; ruleText = "Rule: >= 2yrs (400mg)"; }
-            }
-            else if (med.id === "cpm") {
-                finalMg = (w * 0.1).toFixed(1) + " mg";
-                finalMl = ((w * 0.1 / 2) * 5).toFixed(2) + " mL";
-                ruleText = "Formula: 0.1mg/kg";
             }
             else {
                 let mVal = w * 15;
