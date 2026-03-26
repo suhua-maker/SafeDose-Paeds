@@ -28,6 +28,7 @@
         .med-name { font-weight: bold; color: #0f172a; }
         .dose-range-text { color: #475569; font-size: 0.82em; line-height: 1.5; white-space: pre-line; min-width: 350px; }
         .rule-badge { font-size: 10px; color: #64748b; background: #f1f5f9; padding: 2px 5px; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; }
+        .notes-text { font-size: 0.85em; white-space: pre-line; color: #1e293b; }
     </style>
 </head>
 <body>
@@ -55,9 +56,9 @@
                 <tr>
                     <th style="width: 15%">Medication Name</th>
                     <th style="width: 10%">Strength</th>
-                    <th style="width: 30%">Dose Range</th>
-                    <th style="width: 10%">Rec. Dose (mg)</th>
-                    <th style="width: 10%">Rec. Dose (mL)</th>
+                    <th style="width: 25%">Dose Range</th>
+                    <th style="width: 12%">Rec. Dose (mg)</th>
+                    <th style="width: 12%">Rec. Dose (mL)</th>
                     <th style="width: 8%">Freq.</th>
                     <th>Notes</th>
                 </tr>
@@ -73,11 +74,11 @@
             id: "pcm_susp", 
             name: "Paracetamol Suspension", 
             str: "250mg/5mL", 
-            range: "FUKKM\nCHILD:\nup to 1 year: 60 - 120 mg.\n1 - 5 years: 120 - 240 mg.\n6 - 12 years: 240 - 480 mg per dose.\nRepeat every 4 - 6 hours when necessary.\nMax 4 doses in 24 hours", 
+            range: "FUKKM\nCHILD:\nup to 1 year: 60 - 120 mg.\n1 - 5 years: 120 - 240 mg.\n6 - 12 years: 240 - 480 mg per dose.\nRepeat every 4 - 6 hours when necessary.", 
             mg: 250, 
             ml: 5, 
             freq: "TDS/QID", 
-            note: "Adult dose=1000mg/dose." 
+            note: "Max 4 doses in 24 hours.\nAdult dose=1000mg/dose." 
         },
         { 
             id: "pcm_supp", 
@@ -114,7 +115,7 @@
                 <td class="res-mg"><span id="mg-${m.id}">0</span> mg</td>
                 <td class="res-ml" id="ml-container-${m.id}"><span id="ml-${m.id}">0</span></td>
                 <td>${m.freq}</td>
-                <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">Pending...</span></td>
+                <td class="notes-text">${m.note}<span class="rule-badge" id="rule-${m.id}">Pending...</span></td>
             </tr>
         `).join('');
     }
