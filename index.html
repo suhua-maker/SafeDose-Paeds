@@ -14,10 +14,8 @@
         label { font-size: 11px; font-weight: bold; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
         input { padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 18px; width: 120px; text-align: center; font-weight: bold; }
 
-        /* Search Bar Styling */
         .search-container { margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-        #searchBox { width: 100%; max-width: 400px; padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 16px; text-align: left; font-weight: normal; }
-        #searchBox:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(0,86,179,0.1); }
+        #searchBox { width: 100%; max-width: 400px; padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 16px; }
 
         .btn-calculate { background: var(--primary); color: white; border: none; padding: 14px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: transform 0.1s; }
         .btn-calculate:hover { background: #004494; }
@@ -84,11 +82,11 @@
             id: "pcm_susp", 
             name: "Paracetamol Suspension", 
             str: "250mg/5mL", 
-            range: "FUKKM\nCHILD:\nup to 1 year: 60 - 120 mg.\n1 - 5 years: 120 - 240 mg.\n6 - 12 years: 240 - 480 mg per dose.\nRepeat every 4 - 6 hours when necessary.", 
+            range: "FUKKM\nADULT & CHILDREN > 12 years: 500mg - 1g every 4-6 hours\nCHILD 6 - 12 years : 250 - 500 mg\nCHILD 1 - 5 years : 125 - 250 mg\nINFANT 3 - 11 months : 80 mg inserted every 4 - 6 hours if necessary.", 
             mg: 250, 
             ml: 5, 
             freq: "TDS/QID", 
-            note: "Max 4 doses in 24 hours.\nAdult dose=1000mg/dose." 
+            note: "Maximum 4 doses in 24 hours.\nInfants under 3 months should not be given Paracetamol unless advised by doctor; a dose of 10 mg/kg (5 mg/kg if jaundiced) is suitable." 
         },
         { 
             id: "pcm_supp", 
@@ -123,25 +121,19 @@
                 <td>${m.str}</td>
                 <td class="dose-range-text">${m.range}</td>
                 <td class="res-mg"><span id="mg-${m.id}">0</span> mg</td>
-                <td class="res-ml" id="ml-container-${m.id}"><span id="ml-${m.id}">0</span></td>
+                <td class="res-ml"><span id="ml-${m.id}">0</span></td>
                 <td>${m.freq}</td>
                 <td class="notes-text">${m.note}<span class="rule-badge" id="rule-${m.id}">Pending...</span></td>
             </tr>
         `).join('');
     }
 
-    // SEARCH FUNCTION
     function filterMeds() {
         const input = document.getElementById('searchBox').value.toLowerCase();
         const rows = document.getElementsByClassName('med-row');
-
         for (let i = 0; i < rows.length; i++) {
             const medName = rows[i].querySelector('.med-name').innerText.toLowerCase();
-            if (medName.includes(input)) {
-                rows[i].style.display = "";
-            } else {
-                rows[i].style.display = "none";
-            }
+            rows[i].style.display = medName.includes(input) ? "" : "none";
         }
     }
 
@@ -155,54 +147,33 @@
         }
 
         medicationRegistry.forEach(med => {
-            let finalMg = 0;
-            let finalMl = "0.00";
-            let ruleText = "";
+            let finalMg = 0, finalMl = "0.00", ruleText = "";
 
             if (med.id === "pcm_susp") {
                 finalMg = w * 15;
                 finalMl = ((finalMg / 250) * 5).toFixed(2) + " mL";
                 ruleText = "Formula: 15mg/kg";
             } 
-            
             else if (med.id === "pcm_supp") {
                 finalMg = w * 30;
                 finalMl = "-";
                 ruleText = "Formula: 30mg/kg";
             }
-
             else if (med.id === "dph_syr") {
                 finalMg = "-"; 
-                if (y < 2) {
-                    finalMl = "CONTRAINDICATED";
-                    ruleText = "Not for < 2yrs";
-                } else if (y < 6) {
-                    let calc = (1 * w * 5) / 7;
-                    finalMl = Math.min(calc, 2.5).toFixed(2) + " mL";
-                    ruleText = "Child 2-5 (Max 2.5mL)";
-                } else {
-                    let calc = (1 * w * 5) / 7;
-                    finalMl = Math.min(calc, 5).toFixed(2) + " mL";
-                    ruleText = "Child 6-12 (Max 5mL)";
-                }
+                if (y < 2) { finalMl = "CONTRAINDICATED"; ruleText = "Not for < 2yrs"; }
+                else if (y < 6) { finalMl = Math.min((1 * w * 5) / 7, 2.5).toFixed(2) + " mL"; ruleText = "Child 2-5 (Max 2.5mL)"; }
+                else { finalMl = Math.min((1 * w * 5) / 7, 5).toFixed(2) + " mL"; ruleText = "Child 6-12 (Max 5mL)"; }
             }
-
             else if (med.id === "alben") {
-                if (y < 2) {
-                    finalMg = 200; finalMl = "5.00 mL";
-                    ruleText = "Rule: < 2yrs (200mg)";
-                } else {
-                    finalMg = 400; finalMl = "10.00 mL";
-                    ruleText = "Rule: >= 2yrs (400mg)";
-                }
+                if (y < 2) { finalMg = 200; finalMl = "5.00 mL"; ruleText = "Rule: < 2yrs (200mg)"; }
+                else { finalMg = 400; finalMl = "10.00 mL"; ruleText = "Rule: >= 2yrs (400mg)"; }
             }
-
             else if (med.id === "cpm") {
                 finalMg = w * 0.1;
                 finalMl = ((finalMg / 2) * 5).toFixed(2) + " mL";
                 ruleText = "Formula: 0.1mg/kg";
             }
-
             else {
                 finalMg = w * 15;
                 finalMl = ((finalMg / med.mg) * med.ml).toFixed(2) + " mL";
