@@ -7,7 +7,7 @@
     <style>
         :root { --primary: #0056b3; --accent: #d93025; --bg: #f8fafc; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); padding: 20px; }
-        .container { max-width: 1400px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .container { max-width: 1450px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         
         .header-bar { display: flex; flex-wrap: wrap; gap: 20px; background: #eef2f7; padding: 25px; border-radius: 10px; align-items: flex-end; margin-bottom: 25px; border: 1px solid #d1d9e6; }
         .field { display: flex; flex-direction: column; gap: 8px; }
@@ -18,16 +18,15 @@
         .btn-calculate:hover { background: #004494; }
 
         .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; }
-        table { width: 100%; border-collapse: collapse; min-width: 1200px; }
+        table { width: 100%; border-collapse: collapse; min-width: 1350px; }
         th { background: var(--primary); color: white; padding: 15px; text-align: left; font-size: 12px; text-transform: uppercase; position: sticky; top: 0; }
         td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #1e293b; vertical-align: top; }
         tr:nth-child(even) { background: #f8fafc; }
         
         .res-mg { font-weight: bold; color: var(--primary); font-size: 1.1em; }
         .res-ml { font-weight: 800; color: var(--accent); background: #fff5f5; padding: 6px 10px; border-radius: 6px; border: 1px solid #fed7d7; font-size: 1.2em; display: inline-block; }
-        .contra { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.9em; }
         .med-name { font-weight: bold; color: #0f172a; }
-        .dose-range-text { color: #475569; font-size: 0.85em; line-height: 1.4; white-space: pre-line; min-width: 250px; }
+        .dose-range-text { color: #475569; font-size: 0.82em; line-height: 1.5; white-space: pre-line; min-width: 350px; }
         .rule-badge { font-size: 10px; color: #64748b; background: #f1f5f9; padding: 2px 5px; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; }
     </style>
 </head>
@@ -54,11 +53,11 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 18%">Medication Name</th>
+                    <th style="width: 15%">Medication Name</th>
                     <th style="width: 10%">Strength</th>
-                    <th style="width: 22%">Dose Range</th>
-                    <th style="width: 12%">Rec. Dose (mg)</th>
-                    <th style="width: 12%">Rec. Dose (mL)</th>
+                    <th style="width: 30%">Dose Range</th>
+                    <th style="width: 10%">Rec. Dose (mg)</th>
+                    <th style="width: 10%">Rec. Dose (mL)</th>
                     <th style="width: 8%">Freq.</th>
                     <th>Notes</th>
                 </tr>
@@ -70,8 +69,26 @@
 
 <script>
     const medicationRegistry = [
-        { id: "pcm_susp", name: "Paracetamol Suspension", str: "250mg/5mL", range: "15mg/kg", mg: 250, ml: 5, freq: "TDS/QID", note: "Adult dose=1000mg/dose." },
-        { id: "pcm_supp", name: "Paracetamol Suppository", str: "125mg / 250mg", range: "30mg/kg", mg: 0, ml: 0, freq: "PRN", note: "Max 4 doses/24h" },
+        { 
+            id: "pcm_susp", 
+            name: "Paracetamol Suspension", 
+            str: "250mg/5mL", 
+            range: "FUKKM\nCHILD:\nup to 1 year: 60 - 120 mg.\n1 - 5 years: 120 - 240 mg.\n6 - 12 years: 240 - 480 mg per dose.\nRepeat every 4 - 6 hours when necessary.\nMax 4 doses in 24 hours", 
+            mg: 250, 
+            ml: 5, 
+            freq: "TDS/QID", 
+            note: "Adult dose=1000mg/dose." 
+        },
+        { 
+            id: "pcm_supp", 
+            name: "Paracetamol Suppository", 
+            str: "125mg / 250mg", 
+            range: "FUKKM\nADULT & CHILDREN > 12 years: 500mg - 1g every 4-6h\nCHILD 6 - 12y: 250 - 500 mg\nCHILD 1 - 5y: 125 - 250 mg\nINFANT 3 - 11m: 80 mg\nRepeat every 4 - 6h PRN (Max 4 doses in 24h)\nINFANTS < 3m: 10mg/kg (5mg/kg if jaundiced)", 
+            mg: 0, 
+            ml: 0, 
+            freq: "PRN", 
+            note: "Max 4 doses/24h" 
+        },
         { 
             id: "dph_syr", 
             name: "Diphenhydramine Syrup", 
@@ -115,7 +132,6 @@
             let finalMg = 0;
             let finalMl = "0.00";
             let ruleText = "";
-            let isContra = false;
 
             if (med.id === "pcm_susp") {
                 finalMg = w * 15;
@@ -133,7 +149,6 @@
                 finalMg = "-"; 
                 if (y < 2) {
                     finalMl = "CONTRAINDICATED";
-                    isContra = true;
                     ruleText = "Not for < 2yrs";
                 } else if (y < 6) {
                     let calc = (1 * w * 5) / 7;
@@ -169,14 +184,7 @@
             }
 
             document.getElementById(`mg-${med.id}`).innerText = finalMg === "-" ? "-" : finalMg.toFixed(1);
-            
-            const mlDisplay = document.getElementById(`ml-${med.id}`);
-            if (isContra) {
-                mlDisplay.innerHTML = `<span class="contra">${finalMl}</span>`;
-            } else {
-                mlDisplay.innerText = finalMl;
-            }
-            
+            document.getElementById(`ml-${med.id}`).innerText = finalMl;
             document.getElementById(`rule-${med.id}`).innerText = ruleText;
         });
     }
