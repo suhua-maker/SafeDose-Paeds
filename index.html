@@ -26,6 +26,7 @@
         
         .res-mg { font-weight: bold; color: var(--primary); font-size: 1.1em; }
         .res-ml { font-weight: 800; color: var(--accent); background: #fff5f5; padding: 6px 10px; border-radius: 6px; border: 1px solid #fed7d7; font-size: 1.2em; }
+        .contra { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.9em; }
         .med-name { font-weight: bold; color: #0f172a; }
         .rule-badge { font-size: 10px; color: #64748b; background: #f1f5f9; padding: 2px 5px; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; }
     </style>
@@ -67,10 +68,10 @@
 </div>
 
 <script>
-    // Ibuprofen Syrup removed from Registry
     const medicationRegistry = [
         { id: "pcm_susp", name: "Paracetamol Suspension", str: "250mg/5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Adult dose=1000mg/dose." },
         { id: "pcm_supp", name: "Paracetamol Suppository", str: "125mg / 250mg", mg: 0, ml: 0, freq: "PRN", note: "Max 4 doses/24h" },
+        { id: "dph_syr", name: "DIPHENHYDRAMINE SYRUP", str: "7mg/5mL", mg: 7, ml: 5, freq: "TDS", note: "" },
         { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
         { id: "cpm", name: "Chlorpheniramine", str: "2mg/5mL", mg: 2, ml: 5, freq: "TDS", note: "Max 12mg/day" },
         { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", mg: 200, ml: 5, freq: "STAT", note: "Age-dependent dose" }
@@ -83,7 +84,7 @@
                 <td class="med-name">${m.name}</td>
                 <td>${m.str}</td>
                 <td class="res-mg"><span id="mg-${m.id}">0</span> mg</td>
-                <td class="res-ml"><span id="ml-${m.id}">0</span></td>
+                <td class="res-ml" id="ml-container-${m.id}"><span id="ml-${m.id}">0</span></td>
                 <td>${m.freq}</td>
                 <td><small>${m.note}</small><span class="rule-badge" id="rule-${m.id}">Pending...</span></td>
             </tr>
@@ -103,6 +104,7 @@
             let finalMg = 0;
             let finalMl = "0.00";
             let ruleText = "";
+            let isContra = false;
 
             if (med.id === "pcm_susp") {
                 finalMg = w * 15;
@@ -114,6 +116,24 @@
                 finalMg = w * 30;
                 finalMl = "-";
                 ruleText = "Formula: 30mg/kg";
+            }
+
+            // NEW: Diphenhydramine Logic
+            else if (med.id === "dph_syr") {
+                finalMg = "-"; 
+                if (y < 2) {
+                    finalMl = "CONTRAINDICATED";
+                    isContra = true;
+                    ruleText = "Age < 2yrs";
+                } else if (y < 6) {
+                    let calc = (1 * w * 5) / 7;
+                    finalMl = Math.min(calc, 2.5).toFixed(2) + " mL";
+                    ruleText = "Age 2-6 (Max 2.5mL)";
+                } else {
+                    let calc = (1 * w * 5) / 7;
+                    finalMl = Math.min(calc, 5).toFixed(2) + " mL";
+                    ruleText = "Age 6+ (Max 5mL)";
+                }
             }
 
             else if (med.id === "alben") {
@@ -133,14 +153,21 @@
             }
 
             else {
-                // Default formula for Amoxicillin and others
                 finalMg = w * 15;
                 finalMl = ((finalMg / med.mg) * med.ml).toFixed(2) + " mL";
-                ruleText = "Standard Calculation (15mg/kg)";
+                ruleText = "Standard Calculation";
             }
 
-            document.getElementById(`mg-${med.id}`).innerText = finalMg.toFixed(1);
-            document.getElementById(`ml-${med.id}`).innerText = finalMl;
+            // Display Logic
+            document.getElementById(`mg-${med.id}`).innerText = finalMg === "-" ? "-" : finalMg.toFixed(1);
+            
+            const mlDisplay = document.getElementById(`ml-${med.id}`);
+            if (isContra) {
+                mlDisplay.innerHTML = `<span class="contra">${finalMl}</span>`;
+            } else {
+                mlDisplay.innerText = finalMl;
+            }
+            
             document.getElementById(`rule-${med.id}`).innerText = ruleText;
         });
     }
