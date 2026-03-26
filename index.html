@@ -14,8 +14,10 @@
         label { font-size: 11px; font-weight: bold; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
         input { padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 18px; width: 120px; text-align: center; font-weight: bold; }
 
+        /* Search Bar Styling */
         .search-container { margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-        #searchBox { width: 100%; max-width: 400px; padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 16px; }
+        #searchBox { width: 100%; max-width: 400px; padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 16px; text-align: left; font-weight: normal; }
+        #searchBox:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(0,86,179,0.1); }
 
         .btn-calculate { background: var(--primary); color: white; border: none; padding: 14px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: transform 0.1s; }
         .btn-calculate:hover { background: #004494; }
@@ -82,21 +84,21 @@
             id: "pcm_susp", 
             name: "Paracetamol Suspension", 
             str: "250mg/5mL", 
-            range: "FUKKM\nADULT & CHILDREN > 12 years: 500mg - 1g every 4-6 hours\nCHILD 6 - 12 years : 250 - 500 mg\nCHILD 1 - 5 years : 125 - 250 mg\nINFANT 3 - 11 months : 80 mg inserted every 4 - 6 hours if necessary.", 
+            range: "FUKKM\nCHILD:\nup to 1 year: 60 - 120 mg.\n1 - 5 years: 120 - 240 mg.\n6 - 12 years: 240 - 480 mg per dose.\nRepeat every 4 - 6 hours when necessary.", 
             mg: 250, 
             ml: 5, 
             freq: "TDS/QID", 
-            note: "Maximum 4 doses in 24 hours.\nInfants under 3 months should not be given Paracetamol unless advised by doctor; a dose of 10 mg/kg (5 mg/kg if jaundiced) is suitable." 
+            note: "Max 4 doses in 24 hours.\nAdult dose=1000mg/dose." 
         },
         { 
             id: "pcm_supp", 
             name: "Paracetamol Suppository", 
             str: "125mg / 250mg", 
-            range: "FUKKM\nADULT & CHILDREN > 12 years: 500mg - 1g every 4-6h\nCHILD 6 - 12y: 250 - 500 mg\nCHILD 1 - 5y: 125 - 250 mg\nINFANT 3 - 11m: 80 mg\nRepeat every 4 - 6h PRN (Max 4 doses in 24h)\nINFANTS < 3m: 10mg/kg (5mg/kg if jaundiced)", 
+            range: "FUKKM\nADULT & CHILDREN more than 12 years old: 500mg - 1g every 4-6 hours\nCHILD 6 - 12 years : 250 - 500 mg; 1 - 5 years : 125 - 250 mg; 3 - 11 months : 80 mg inserted every 4 - 6 hours if necessary.", 
             mg: 0, 
             ml: 0, 
             freq: "PRN", 
-            note: "Max 4 doses/24h" 
+            note: "Maximum 4 doses in 24 hours.\nInfants under 3 months should not be given Paracetamol unless advised by doctor; a dose of 10 mg/kg (5 mg/kg if jaundiced) is suitable." 
         },
         { 
             id: "dph_syr", 
@@ -121,7 +123,7 @@
                 <td>${m.str}</td>
                 <td class="dose-range-text">${m.range}</td>
                 <td class="res-mg"><span id="mg-${m.id}">0</span> mg</td>
-                <td class="res-ml"><span id="ml-${m.id}">0</span></td>
+                <td class="res-ml" id="ml-container-${m.id}"><span id="ml-${m.id}">0</span></td>
                 <td>${m.freq}</td>
                 <td class="notes-text">${m.note}<span class="rule-badge" id="rule-${m.id}">Pending...</span></td>
             </tr>
@@ -161,9 +163,20 @@
             }
             else if (med.id === "dph_syr") {
                 finalMg = "-"; 
-                if (y < 2) { finalMl = "CONTRAINDICATED"; ruleText = "Not for < 2yrs"; }
-                else if (y < 6) { finalMl = Math.min((1 * w * 5) / 7, 2.5).toFixed(2) + " mL"; ruleText = "Child 2-5 (Max 2.5mL)"; }
-                else { finalMl = Math.min((1 * w * 5) / 7, 5).toFixed(2) + " mL"; ruleText = "Child 6-12 (Max 5mL)"; }
+                if (y < 2) { 
+                    finalMl = "CONTRAINDICATED"; 
+                    ruleText = "Not for < 2yrs"; 
+                }
+                else if (y < 6) { 
+                    let calc = (1 * w * 5) / 7;
+                    finalMl = Math.min(calc, 2.5).toFixed(2) + " mL"; 
+                    ruleText = "Child 2-5 (Max 2.5mL)"; 
+                }
+                else { 
+                    let calc = (1 * w * 5) / 7;
+                    finalMl = Math.min(calc, 5).toFixed(2) + " mL"; 
+                    ruleText = "Child 6-12 (Max 5mL)"; 
+                }
             }
             else if (med.id === "alben") {
                 if (y < 2) { finalMg = 200; finalMl = "5.00 mL"; ruleText = "Rule: < 2yrs (200mg)"; }
