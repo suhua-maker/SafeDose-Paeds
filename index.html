@@ -130,6 +130,16 @@
             freq: "OD", 
             note: "-" 
         },
+        { 
+            id: "brom_syr", 
+            name: "Bromhexine Syrup", 
+            str: "4mg/5mL", 
+            range: "FUKKM\nBy body weight: 0.3 mg/kg/day 8 hourly\nBased on age:\n6-12y: 4mg TDS; 2-6y: 2mg TDS; <2y: 1mg TDS", 
+            mg: 4, 
+            ml: 5, 
+            freq: "TDS", 
+            note: "-" 
+        },
         { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", range: "15mg/kg", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
         { id: "cpm", name: "Chlorpheniramine", str: "2mg/5mL", range: "0.1mg/kg", mg: 2, ml: 5, freq: "TDS", note: "Max 12mg/day" },
         { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", range: "Age dependent", mg: 200, ml: 5, freq: "STAT", note: "Age-dependent dose" }
@@ -201,6 +211,23 @@
                 finalMl = doseVal.toFixed(2) + " mL";
                 ruleText = (y > 6) ? `Age > 6y (${w <= 30 ? '<=30kg' : '>30kg'})` : "Age <= 6y (Standard)";
             }
+            else if (med.id === "brom_syr") {
+                if (y < 2) {
+                    finalMg = "0.96 mg";
+                    finalMl = "1.20 mL";
+                    ruleText = "Age < 2y (Fixed)";
+                } else if (y < 6) {
+                    let mgVal = Math.min(0.3 * w, 2);
+                    finalMg = mgVal.toFixed(1) + " mg";
+                    finalMl = ((mgVal / 4) * 5).toFixed(2) + " mL";
+                    ruleText = "Age 2-6 (Max 2mg)";
+                } else {
+                    let mgVal = Math.min(0.3 * w, 4);
+                    finalMg = mgVal.toFixed(1) + " mg";
+                    finalMl = ((mgVal / 4) * 5).toFixed(2) + " mL";
+                    ruleText = "Age 6-12 (Max 4mg)";
+                }
+            }
             else if (med.id === "alben") {
                 if (y < 2) { finalMg = "200.0 mg"; finalMl = "5.00 mL"; ruleText = "Rule: < 2yrs (200mg)"; }
                 else { finalMg = "400.0 mg"; finalMl = "10.00 mL"; ruleText = "Rule: >= 2yrs (400mg)"; }
@@ -222,7 +249,7 @@
             mgEl.innerText = finalMg;
             mlEl.innerText = finalMl;
             
-            if (finalMg === "CONTRA") {
+            if (finalMg.includes("CONTRA")) {
                 mgEl.classList.add("contra"); mlEl.classList.add("contra");
             } else {
                 mgEl.classList.remove("contra"); mlEl.classList.remove("contra");
