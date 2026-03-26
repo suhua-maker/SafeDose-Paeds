@@ -120,6 +120,16 @@
             freq: "TDS", 
             note: "Contraindicated for use in children under 2-year-old." 
         },
+        { 
+            id: "lorat_syr", 
+            name: "Loratadine Syrup", 
+            str: "5mg/5mL", 
+            range: "FUKKM: CHILD >6y: 10mg OD; 2-6y: 5mg OD\nPRODUCT LEAFLET / MIMS:\n>30kg: 10mg OD\n<=30kg: 5mg OD", 
+            mg: 5, 
+            ml: 5, 
+            freq: "OD", 
+            note: "-" 
+        },
         { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", range: "15mg/kg", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
         { id: "cpm", name: "Chlorpheniramine", str: "2mg/5mL", range: "0.1mg/kg", mg: 2, ml: 5, freq: "TDS", note: "Max 12mg/day" },
         { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", range: "Age dependent", mg: 200, ml: 5, freq: "STAT", note: "Age-dependent dose" }
@@ -162,32 +172,34 @@
             let finalMg = 0, finalMl = "0.00", ruleText = "";
 
             if (med.id === "pcm_susp") {
-                finalMg = w * 15;
-                finalMl = ((finalMg / 250) * 5).toFixed(2) + " mL";
+                finalMg = (w * 15).toFixed(1) + " mg";
+                finalMl = ((w * 15 / 250) * 5).toFixed(2) + " mL";
                 ruleText = "Formula: 15mg/kg";
             } 
             else if (med.id === "pcm_supp") {
-                finalMg = w * 30;
+                finalMg = (w * 30).toFixed(1) + " mg";
                 finalMl = "-";
                 ruleText = "Formula: 30mg/kg";
             }
             else if (med.id === "dph_syr") {
-                finalMg = "-"; 
-                if (y < 2) { finalMl = "CONTRAINDICATED"; ruleText = "Age < 2yrs"; }
-                else if (y < 6) { finalMl = Math.min((w * 5 / 7), 2.5).toFixed(2) + " mL"; ruleText = "Age 2-6 (Max 2.5mL)"; }
-                else { finalMl = Math.min((w * 5 / 7), 5).toFixed(2) + " mL"; ruleText = "Age 6+ (Max 5mL)"; }
+                if (y < 2) { finalMg = "CONTRA"; finalMl = "CONTRA"; ruleText = "Age < 2yrs"; }
+                else if (y < 6) { finalMg = "-"; finalMl = Math.min((w * 5 / 7), 2.5).toFixed(2) + " mL"; ruleText = "Age 2-6 (Max 2.5mL)"; }
+                else { finalMg = "-"; finalMl = Math.min((w * 5 / 7), 5).toFixed(2) + " mL"; ruleText = "Age 6+ (Max 5mL)"; }
             }
             else if (med.id === "prom_syr") {
-                if (y < 2) { 
-                    finalMg = "CONTRAINDICATED"; 
-                    finalMl = "CONTRAINDICATED"; 
-                    ruleText = "Age < 2yrs";
-                } else {
+                if (y < 2) { finalMg = "CONTRA"; finalMl = "CONTRA"; ruleText = "Age < 2yrs"; }
+                else {
                     let mgVal = Math.min(0.3 * w, 8);
                     finalMg = mgVal.toFixed(1) + " mg";
                     finalMl = ((mgVal / 5) * 5).toFixed(2) + " mL";
                     ruleText = "Formula: 0.3mg/kg (Max 8mg)";
                 }
+            }
+            else if (med.id === "lorat_syr") {
+                let doseVal = (y > 6) ? (w <= 30 ? 5 : 10) : 5;
+                finalMg = doseVal.toFixed(1) + " mg";
+                finalMl = doseVal.toFixed(2) + " mL";
+                ruleText = (y > 6) ? `Age > 6y (${w <= 30 ? '<=30kg' : '>30kg'})` : "Age <= 6y (Standard)";
             }
             else if (med.id === "alben") {
                 if (y < 2) { finalMg = "200.0 mg"; finalMl = "5.00 mL"; ruleText = "Rule: < 2yrs (200mg)"; }
@@ -207,18 +219,14 @@
 
             const mgEl = document.getElementById(`mg-${med.id}`);
             const mlEl = document.getElementById(`ml-${med.id}`);
-            
             mgEl.innerText = finalMg;
             mlEl.innerText = finalMl;
             
-            if (finalMg === "CONTRAINDICATED") {
-                mgEl.classList.add("contra");
-                mlEl.classList.add("contra");
+            if (finalMg === "CONTRA") {
+                mgEl.classList.add("contra"); mlEl.classList.add("contra");
             } else {
-                mgEl.classList.remove("contra");
-                mlEl.classList.remove("contra");
+                mgEl.classList.remove("contra"); mlEl.classList.remove("contra");
             }
-            
             document.getElementById(`rule-${med.id}`).innerText = ruleText;
         });
     }
