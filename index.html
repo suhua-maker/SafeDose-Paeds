@@ -14,7 +14,6 @@
         label { font-size: 11px; font-weight: bold; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
         input { padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 18px; width: 120px; text-align: center; font-weight: bold; }
 
-        /* Search Bar Styling */
         .search-container { margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
         #searchBox { width: 100%; max-width: 400px; padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 16px; text-align: left; font-weight: normal; }
         #searchBox:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(0,86,179,0.1); }
@@ -34,6 +33,7 @@
         .dose-range-text { color: #475569; font-size: 0.82em; line-height: 1.5; white-space: pre-line; min-width: 350px; }
         .rule-badge { font-size: 10px; color: #64748b; background: #f1f5f9; padding: 2px 5px; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; }
         .notes-text { font-size: 0.85em; white-space: pre-line; color: #1e293b; }
+        .contra { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -110,6 +110,16 @@
             freq: "TDS", 
             note: "Contraindicated for use in children under 2-year-old" 
         },
+        { 
+            id: "prom_syr", 
+            name: "Promethazine Syrup", 
+            str: "5mg/5mL", 
+            range: "FUKKM\nCHILD 2 - 5 years: 5 - 15 mg daily\nCHILD 5 - 10 years : 10 - 25 mg daily", 
+            mg: 5, 
+            ml: 5, 
+            freq: "TDS", 
+            note: "Contraindicated for use in children under 2-year-old." 
+        },
         { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", range: "15mg/kg", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
         { id: "cpm", name: "Chlorpheniramine", str: "2mg/5mL", range: "0.1mg/kg", mg: 2, ml: 5, freq: "TDS", note: "Max 12mg/day" },
         { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", range: "Age dependent", mg: 200, ml: 5, freq: "STAT", note: "Age-dependent dose" }
@@ -123,7 +133,7 @@
                 <td>${m.str}</td>
                 <td class="dose-range-text">${m.range}</td>
                 <td class="res-mg"><span id="mg-${m.id}">0</span> mg</td>
-                <td class="res-ml" id="ml-container-${m.id}"><span id="ml-${m.id}">0</span></td>
+                <td class="res-ml"><span id="ml-${m.id}">0</span></td>
                 <td>${m.freq}</td>
                 <td class="notes-text">${m.note}<span class="rule-badge" id="rule-${m.id}">Pending...</span></td>
             </tr>
@@ -163,38 +173,52 @@
             }
             else if (med.id === "dph_syr") {
                 finalMg = "-"; 
+                if (y < 2) { finalMl = "CONTRAINDICATED"; ruleText = "Age < 2yrs"; }
+                else if (y < 6) { finalMl = Math.min((w * 5 / 7), 2.5).toFixed(2) + " mL"; ruleText = "Age 2-6 (Max 2.5mL)"; }
+                else { finalMl = Math.min((w * 5 / 7), 5).toFixed(2) + " mL"; ruleText = "Age 6+ (Max 5mL)"; }
+            }
+            else if (med.id === "prom_syr") {
                 if (y < 2) { 
+                    finalMg = "CONTRAINDICATED"; 
                     finalMl = "CONTRAINDICATED"; 
-                    ruleText = "Not for < 2yrs"; 
-                }
-                else if (y < 6) { 
-                    let calc = (1 * w * 5) / 7;
-                    finalMl = Math.min(calc, 2.5).toFixed(2) + " mL"; 
-                    ruleText = "Child 2-5 (Max 2.5mL)"; 
-                }
-                else { 
-                    let calc = (1 * w * 5) / 7;
-                    finalMl = Math.min(calc, 5).toFixed(2) + " mL"; 
-                    ruleText = "Child 6-12 (Max 5mL)"; 
+                    ruleText = "Age < 2yrs";
+                } else {
+                    let mgVal = Math.min(0.3 * w, 8);
+                    finalMg = mgVal.toFixed(1) + " mg";
+                    finalMl = ((mgVal / 5) * 5).toFixed(2) + " mL";
+                    ruleText = "Formula: 0.3mg/kg (Max 8mg)";
                 }
             }
             else if (med.id === "alben") {
-                if (y < 2) { finalMg = 200; finalMl = "5.00 mL"; ruleText = "Rule: < 2yrs (200mg)"; }
-                else { finalMg = 400; finalMl = "10.00 mL"; ruleText = "Rule: >= 2yrs (400mg)"; }
+                if (y < 2) { finalMg = "200.0 mg"; finalMl = "5.00 mL"; ruleText = "Rule: < 2yrs (200mg)"; }
+                else { finalMg = "400.0 mg"; finalMl = "10.00 mL"; ruleText = "Rule: >= 2yrs (400mg)"; }
             }
             else if (med.id === "cpm") {
-                finalMg = w * 0.1;
-                finalMl = ((finalMg / 2) * 5).toFixed(2) + " mL";
+                finalMg = (w * 0.1).toFixed(1) + " mg";
+                finalMl = ((w * 0.1 / 2) * 5).toFixed(2) + " mL";
                 ruleText = "Formula: 0.1mg/kg";
             }
             else {
-                finalMg = w * 15;
-                finalMl = ((finalMg / med.mg) * med.ml).toFixed(2) + " mL";
+                let mVal = w * 15;
+                finalMg = mVal.toFixed(1) + " mg";
+                finalMl = ((mVal / med.mg) * med.ml).toFixed(2) + " mL";
                 ruleText = "Standard Calculation";
             }
 
-            document.getElementById(`mg-${med.id}`).innerText = finalMg === "-" ? "-" : finalMg.toFixed(1);
-            document.getElementById(`ml-${med.id}`).innerText = finalMl;
+            const mgEl = document.getElementById(`mg-${med.id}`);
+            const mlEl = document.getElementById(`ml-${med.id}`);
+            
+            mgEl.innerText = finalMg;
+            mlEl.innerText = finalMl;
+            
+            if (finalMg === "CONTRAINDICATED") {
+                mgEl.classList.add("contra");
+                mlEl.classList.add("contra");
+            } else {
+                mgEl.classList.remove("contra");
+                mlEl.classList.remove("contra");
+            }
+            
             document.getElementById(`rule-${med.id}`).innerText = ruleText;
         });
     }
