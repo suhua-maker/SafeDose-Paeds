@@ -67,10 +67,10 @@
 </div>
 
 <script>
+    // Ibuprofen Syrup removed from Registry
     const medicationRegistry = [
         { id: "pcm_susp", name: "Paracetamol Suspension", str: "250mg/5mL", mg: 250, ml: 5, freq: "TDS/QID", note: "Adult dose=1000mg/dose." },
         { id: "pcm_supp", name: "Paracetamol Suppository", str: "125mg / 250mg", mg: 0, ml: 0, freq: "PRN", note: "Max 4 doses/24h" },
-        { id: "ibu", name: "Ibuprofen Syrup", str: "100mg/5mL", mg: 100, ml: 5, freq: "TDS", note: "Post-meal" },
         { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
         { id: "cpm", name: "Chlorpheniramine", str: "2mg/5mL", mg: 2, ml: 5, freq: "TDS", note: "Max 12mg/day" },
         { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", mg: 200, ml: 5, freq: "STAT", note: "Age-dependent dose" }
@@ -116,12 +116,6 @@
                 ruleText = "Formula: 30mg/kg";
             }
 
-            else if (med.id === "ibu") {
-                finalMg = w * 10;
-                finalMl = ((finalMg / 100) * 5).toFixed(2) + " mL";
-                ruleText = "Formula: 10mg/kg";
-            }
-
             else if (med.id === "alben") {
                 if (y < 2) {
                     finalMg = 200; finalMl = "5.00 mL";
@@ -139,9 +133,10 @@
             }
 
             else {
+                // Default formula for Amoxicillin and others
                 finalMg = w * 15;
                 finalMl = ((finalMg / med.mg) * med.ml).toFixed(2) + " mL";
-                ruleText = "Standard Calculation";
+                ruleText = "Standard Calculation (15mg/kg)";
             }
 
             document.getElementById(`mg-${med.id}`).innerText = finalMg.toFixed(1);
