@@ -88,8 +88,6 @@
         { id: "lorat_syr", name: "Loratadine Syrup", str: "5mg/5mL", range: "FUKKM: CHILD >6y: 10mg OD; 2-6y: 5mg OD\n>30kg: 10mg OD; <=30kg: 5mg OD", mg: 5, ml: 5, freq: "OD", note: "-" },
         { id: "brom_syr", name: "Bromhexine Syrup", str: "4mg/5mL", range: "FUKKM\nWeight: 0.3mg/kg/day 8 hourly\nAge: 6-12y: 4mg TDS; 2-6y: 2mg TDS; <2y: 1mg TDS", mg: 4, ml: 5, freq: "TDS", note: "-" },
         { id: "pred_syr", name: "Prednisolone Syrup", str: "2.5mg/5mL", range: "FUKKM\nCHILD: 0.5 - 2 mg/kg/day in divided doses every 6 - 8 hours or as a single daily", mg: 2.5, ml: 5, freq: "OD", note: "-" },
-        { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", range: "15mg/kg", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
-        { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", range: "Age dependent", mg: 200, ml: 5, freq: "STAT", note: "Age-dependent dose" },
         { id: "lactulose", name: "Lactulose", str: "3.3g/5ml", range: "FUKKM\nCHILD 0.5 ml/kg/dose once or twice daily.", mg: 3300, ml: 5, freq: "OD/BD", note: "-" }
     ];
 
@@ -183,25 +181,10 @@
                     finalMg = mgV.toFixed(1) + " mg"; finalMl = (mgV * 5 / 2).toFixed(2) + " mL"; ruleText = "Age 6+ (Max 2mg)";
                 }
             }
-            else if (med.id === "amox") {
-                finalMg = (w * 15).toFixed(1) + " mg";
-                finalMl = (w * 15 / 125 * 5).toFixed(2) + " mL";
-                ruleText = "Formula: 15mg/kg";
-            }
-            else if (med.id === "alben") {
-                if (y < 2) { finalMg = "200.0 mg"; finalMl = "5.00 mL"; ruleText = "Rule: < 2yrs (200mg)"; }
-                else { finalMg = "400.0 mg"; finalMl = "10.00 mL"; ruleText = "Rule: >= 2yrs (400mg)"; }
-            }
             else if (med.id === "lactulose") {
                 finalMg = "-";
                 finalMl = Math.min(15, (0.5 * w)).toFixed(2) + " mL";
                 ruleText = "Formula: 0.5mL/kg (Max 15mL)";
-            }
-            else {
-                let mVal = w * 15;
-                finalMg = mVal.toFixed(1) + " mg";
-                finalMl = ((mVal / med.mg) * med.ml).toFixed(2) + " mL";
-                ruleText = "Standard Calculation";
             }
 
             const mgEl = document.getElementById(`mg-${med.id}`);
