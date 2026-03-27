@@ -80,88 +80,17 @@
 
 <script>
     const medicationRegistry = [
-        { 
-            id: "pcm_susp", 
-            name: "Paracetamol Suspension", 
-            str: "250mg/5mL", 
-            range: "FUKKM\nCHILD:\nup to 1 year: 60 - 120 mg.\n1 - 5 years: 120 - 240 mg.\n6 - 12 years: 240 - 480 mg per dose.\nRepeat every 4 - 6 hours when necessary.", 
-            mg: 250, 
-            ml: 5, 
-            freq: "TDS/QID", 
-            note: "Max 4 doses in 24 hours.\nAdult dose=1000mg/dose." 
-        },
-        { 
-            id: "pcm_supp", 
-            name: "Paracetamol Suppository", 
-            str: "125mg / 250mg", 
-            range: "FUKKM\nADULT & CHILDREN > 12y: 500mg-1g every 4-6h\nCHILD 6-12y: 250-500mg; 1-5y: 125-250mg;\n3-11m: 80mg every 4-6h PRN.", 
-            mg: 0, 
-            ml: 0, 
-            freq: "PRN", 
-            note: "Maximum 4 doses in 24 hours.\nInfants <3m: 10mg/kg (5mg/kg if jaundiced)." 
-        },
-        { 
-            id: "cpm_syr", 
-            name: "Chlorpheniramine Syrup", 
-            str: "2mg/5mL", 
-            range: "FUKKM\nCHILD 2-5y: 1mg 4-6 hourly (max 6mg/day)\n6-12y: 2mg 4-6 hourly (max 12mg/day)", 
-            mg: 2, 
-            ml: 5, 
-            freq: "TDS", 
-            note: "Contraindicated for use in children under 2-year-old" 
-        },
-        { 
-            id: "pred_syr", 
-            name: "Prednisolone Syrup", 
-            str: "2.5mg/5mL", 
-            range: "FUKKM\nCHILD: 0.5 - 2 mg/kg/day in divided doses every 6 - 8 hours or as a single daily", 
-            mg: 2.5, 
-            ml: 5, 
-            freq: "OD", 
-            note: "-" 
-        },
-        { 
-            id: "dph_syr", 
-            name: "Diphenhydramine Syrup", 
-            str: "7mg/5mL", 
-            range: "FUKKM\nCHILD 6-12y: 2.5 to 5 ml; 2-5y: 2.5 ml 2-3 times daily\nNOT for children < 2 years", 
-            mg: 7, 
-            ml: 5, 
-            freq: "TDS", 
-            note: "Contraindicated for use in children under 2-year-old" 
-        },
-        { 
-            id: "prom_syr", 
-            name: "Promethazine Syrup", 
-            str: "5mg/5mL", 
-            range: "FUKKM\nCHILD 2-5y: 5-15mg daily; 5-10y: 10-25mg daily", 
-            mg: 5, 
-            ml: 5, 
-            freq: "TDS", 
-            note: "Contraindicated for use in children under 2-year-old." 
-        },
-        { 
-            id: "lorat_syr", 
-            name: "Loratadine Syrup", 
-            str: "5mg/5mL", 
-            range: "FUKKM: CHILD >6y: 10mg OD; 2-6y: 5mg OD\n>30kg: 10mg OD; <=30kg: 5mg OD", 
-            mg: 5, 
-            ml: 5, 
-            freq: "OD", 
-            note: "-" 
-        },
-        { 
-            id: "brom_syr", 
-            name: "Bromhexine Syrup", 
-            str: "4mg/5mL", 
-            range: "FUKKM\nWeight: 0.3mg/kg/day 8 hourly\nAge: 6-12y: 4mg TDS; 2-6y: 2mg TDS; <2y: 1mg TDS", 
-            mg: 4, 
-            ml: 5, 
-            freq: "TDS", 
-            note: "-" 
-        },
+        { id: "pcm_susp", name: "Paracetamol Suspension", str: "250mg/5mL", range: "FUKKM\nCHILD:\nup to 1 year: 60 - 120 mg.\n1 - 5 years: 120 - 240 mg.\n6 - 12 years: 240 - 480 mg per dose.\nRepeat every 4 - 6 hours when necessary.", mg: 250, ml: 5, freq: "TDS/QID", note: "Max 4 doses in 24 hours.\nAdult dose=1000mg/dose." },
+        { id: "pcm_supp", name: "Paracetamol Suppository", str: "125mg / 250mg", range: "FUKKM\nADULT & CHILDREN > 12y: 500mg-1g every 4-6h\nCHILD 6-12y: 250-500mg; 1-5y: 125-250mg;\n3-11m: 80mg every 4-6h PRN.", mg: 0, ml: 0, freq: "PRN", note: "Maximum 4 doses in 24 hours.\nInfants <3m: 10mg/kg (5mg/kg if jaundiced)." },
+        { id: "cpm_syr", name: "Chlorpheniramine Syrup", str: "2mg/5mL", range: "FUKKM\nCHILD 2-5y: 1mg 4-6 hourly (max 6mg/day)\n6-12y: 2mg 4-6 hourly (max 12mg/day)", mg: 2, ml: 5, freq: "TDS", note: "Contraindicated for use in children under 2-year-old" },
+        { id: "dph_syr", name: "Diphenhydramine Syrup", str: "7mg/5mL", range: "FUKKM\nCHILD 6-12y: 2.5 to 5 ml; 2-5y: 2.5 ml 2-3 times daily\nNOT for children < 2 years", mg: 7, ml: 5, freq: "TDS", note: "Contraindicated for use in children under 2-year-old" },
+        { id: "prom_syr", name: "Promethazine Syrup", str: "5mg/5mL", range: "FUKKM\nCHILD 2-5y: 5-15mg daily; 5-10y: 10-25mg daily", mg: 5, ml: 5, freq: "TDS", note: "Contraindicated for use in children under 2-year-old." },
+        { id: "lorat_syr", name: "Loratadine Syrup", str: "5mg/5mL", range: "FUKKM: CHILD >6y: 10mg OD; 2-6y: 5mg OD\n>30kg: 10mg OD; <=30kg: 5mg OD", mg: 5, ml: 5, freq: "OD", note: "-" },
+        { id: "brom_syr", name: "Bromhexine Syrup", str: "4mg/5mL", range: "FUKKM\nWeight: 0.3mg/kg/day 8 hourly\nAge: 6-12y: 4mg TDS; 2-6y: 2mg TDS; <2y: 1mg TDS", mg: 4, ml: 5, freq: "TDS", note: "-" },
+        { id: "pred_syr", name: "Prednisolone Syrup", str: "2.5mg/5mL", range: "FUKKM\nCHILD: 0.5 - 2 mg/kg/day in divided doses every 6 - 8 hours or as a single daily", mg: 2.5, ml: 5, freq: "OD", note: "-" },
         { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", range: "15mg/kg", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
-        { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", range: "Age dependent", mg: 200, ml: 5, freq: "STAT", note: "Age-dependent dose" }
+        { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", range: "Age dependent", mg: 200, ml: 5, freq: "STAT", note: "Age-dependent dose" },
+        { id: "lactulose", name: "Lactulose", str: "3.3g/5ml", range: "FUKKM\nCHILD 0.5 ml/kg/dose once or twice daily.", mg: 3300, ml: 5, freq: "OD/BD", note: "-" }
     ];
 
     function init() {
@@ -195,7 +124,7 @@
         if (w <= 0) { alert("Please key in weight first!"); return; }
 
         medicationRegistry.forEach(med => {
-            let finalMg = 0, finalMl = "0.00", ruleText = "";
+            let finalMg = "-", finalMl = "0.00", ruleText = "";
 
             if (med.id === "pcm_susp") {
                 finalMg = (w * 15).toFixed(1) + " mg";
@@ -215,8 +144,8 @@
             }
             else if (med.id === "dph_syr") {
                 if (y < 2) { finalMg = "CONTRA"; finalMl = "CONTRA"; ruleText = "Age < 2yrs"; }
-                else if (y < 6) { finalMg = "-"; finalMl = Math.min((w * 5 / 7), 2.5).toFixed(2) + " mL"; ruleText = "Age 2-6 (Max 2.5mL)"; }
-                else { finalMg = "-"; finalMl = Math.min((w * 5 / 7), 5).toFixed(2) + " mL"; ruleText = "Age 6+ (Max 5mL)"; }
+                else if (y < 6) { finalMl = Math.min((w * 5 / 7), 2.5).toFixed(2) + " mL"; ruleText = "Age 2-6 (Max 2.5mL)"; }
+                else { finalMl = Math.min((w * 5 / 7), 5).toFixed(2) + " mL"; ruleText = "Age 6+ (Max 5mL)"; }
             }
             else if (med.id === "prom_syr") {
                 if (y < 2) { finalMg = "CONTRA"; finalMl = "CONTRA"; ruleText = "Age < 2yrs"; }
@@ -262,6 +191,11 @@
             else if (med.id === "alben") {
                 if (y < 2) { finalMg = "200.0 mg"; finalMl = "5.00 mL"; ruleText = "Rule: < 2yrs (200mg)"; }
                 else { finalMg = "400.0 mg"; finalMl = "10.00 mL"; ruleText = "Rule: >= 2yrs (400mg)"; }
+            }
+            else if (med.id === "lactulose") {
+                finalMg = "-";
+                finalMl = Math.min(15, (0.5 * w)).toFixed(2) + " mL";
+                ruleText = "Formula: 0.5mL/kg (Max 15mL)";
             }
             else {
                 let mVal = w * 15;
