@@ -101,6 +101,16 @@
             note: "Maximum 4 doses in 24 hours.\nInfants <3m: 10mg/kg (5mg/kg if jaundiced)." 
         },
         { 
+            id: "cpm_syr", 
+            name: "Chlorpheniramine Syrup", 
+            str: "2mg/5mL", 
+            range: "FUKKM\nCHILD 2-5y: 1mg 4-6 hourly (max 6mg/day)\n6-12y: 2mg 4-6 hourly (max 12mg/day)", 
+            mg: 2, 
+            ml: 5, 
+            freq: "TDS", 
+            note: "Contraindicated for use in children under 2-year-old" 
+        },
+        { 
             id: "pred_syr", 
             name: "Prednisolone Syrup", 
             str: "2.5mg/5mL", 
@@ -149,16 +159,6 @@
             ml: 5, 
             freq: "TDS", 
             note: "-" 
-        },
-        { 
-            id: "cpm_syr", 
-            name: "Chlorpheniramine Syrup", 
-            str: "2mg/5mL", 
-            range: "FUKKM\nCHILD 2-5y: 1mg 4-6 hourly (max 6mg/day)\n6-12y: 2mg 4-6 hourly (max 12mg/day)", 
-            mg: 2, 
-            ml: 5, 
-            freq: "TDS", 
-            note: "Contraindicated for use in children under 2-year-old" 
         },
         { id: "amox", name: "Amoxicillin Syr", str: "125mg/5mL", range: "15mg/kg", mg: 125, ml: 5, freq: "TDS", note: "5-7 days course" },
         { id: "alben", name: "Albendazole Susp", str: "200mg/5mL", range: "Age dependent", mg: 200, ml: 5, freq: "STAT", note: "Age-dependent dose" }
@@ -253,6 +253,11 @@
                     let mgV = Math.min(0.1 * w, 2);
                     finalMg = mgV.toFixed(1) + " mg"; finalMl = (mgV * 5 / 2).toFixed(2) + " mL"; ruleText = "Age 6+ (Max 2mg)";
                 }
+            }
+            else if (med.id === "amox") {
+                finalMg = (w * 15).toFixed(1) + " mg";
+                finalMl = (w * 15 / 125 * 5).toFixed(2) + " mL";
+                ruleText = "Formula: 15mg/kg";
             }
             else if (med.id === "alben") {
                 if (y < 2) { finalMg = "200.0 mg"; finalMl = "5.00 mL"; ruleText = "Rule: < 2yrs (200mg)"; }
