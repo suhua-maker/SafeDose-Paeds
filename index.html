@@ -32,7 +32,6 @@
         .med-name { font-weight: bold; color: #0f172a; }
         .dose-range-text { color: #475569; font-size: 0.82em; line-height: 1.5; white-space: pre-line; min-width: 350px; }
         
-        /* New Subtitle Box Style */
         .subtitle-box { 
             display: inline-block; 
             background-color: #e0f2fe; 
@@ -107,7 +106,7 @@
             id: "amox_syr", 
             name: "Amoxycillin Syrup", 
             str: "250mg / 5ml", 
-            range: "<span class='subtitle-box'>Tonsilitis/Pharyngitis</span>\nNAG 25mg/kg BD x 10 days (max 500mg BD)\nFUKKM\nAmoxicillin 50mg/kg/day PO in 1 or 2 divided doses (max. 1g/day)", 
+            range: "<span class='subtitle-box'>Tonsilitis/Pharyngitis</span>\nNAG 25mg/kg BD x 10 days (max 500mg BD)", 
             mg: 250, 
             ml: 5, 
             freq: "BD", 
@@ -211,7 +210,6 @@
                 ruleText = "Formula: 0.5mL/kg (Max 15mL)";
             }
             else if (med.id === "amox_syr") {
-                // Formula provided: 25 * weight. Max cap is often 500mg per dose (10ml of 250/5)
                 let mgVal = Math.min(500, (25 * w));
                 finalMg = mgVal.toFixed(1) + " mg";
                 finalMl = (mgVal * 5 / 250).toFixed(2) + " mL";
