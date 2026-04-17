@@ -88,6 +88,7 @@
         { id: "lorat_syr", name: "Loratadine Syrup", str: "5mg/5mL", range: "FUKKM: CHILD >6y: 10mg OD; 2-6y: 5mg OD\n>30kg: 10mg OD; <=30kg: 5mg OD", mg: 5, ml: 5, freq: "OD", note: "-" },
         { id: "brom_syr", name: "Bromhexine Syrup", str: "4mg/5mL", range: "FUKKM\nWeight: 0.3mg/kg/day 8 hourly\nAge: 6-12y: 4mg TDS; 2-6y: 2mg TDS; <2y: 1mg TDS", mg: 4, ml: 5, freq: "TDS", note: "-" },
         { id: "pred_syr", name: "Prednisolone Syrup", str: "2.5mg/5mL", range: "FUKKM\nCHILD: 0.5 - 2 mg/kg/day in divided doses every 6 - 8 hours or as a single daily", mg: 2.5, ml: 5, freq: "OD", note: "-" },
+        { id: "amox_syr", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "Tonsilitis/Pharyngitis: 25mg/kg\nFUKKM\nAmoxicillin 50mg/kg/day PO in 1 or 2 divided doses (max. 1g/day)\nDuration: 10 days", mg: 250, ml: 5, freq: "BD", note: "Complete course of 10 days." },
         { id: "lactulose", name: "Lactulose", str: "3.3g/5ml", range: "FUKKM\nCHILD 0.5 ml/kg/dose once or twice daily.", mg: 3300, ml: 5, freq: "OD/BD", note: "-" }
     ];
 
@@ -180,6 +181,13 @@
                     let mgV = Math.min(0.1 * w, 2);
                     finalMg = mgV.toFixed(1) + " mg"; finalMl = (mgV * 5 / 2).toFixed(2) + " mL"; ruleText = "Age 6+ (Max 2mg)";
                 }
+            }
+            else if (med.id === "amox_syr") {
+                let mlVal = Math.min(10, (25 * w * 5 / 250));
+                let mgVal = mlVal * 250 / 5;
+                finalMg = mgVal.toFixed(1) + " mg";
+                finalMl = mlVal.toFixed(2) + " mL";
+                ruleText = "Formula: 25mg/kg (Max 10mL)";
             }
             else if (med.id === "lactulose") {
                 finalMg = "-";
