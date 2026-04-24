@@ -6,12 +6,13 @@
     <title>Iron Dosing Guide</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 40px 20px; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; max-width: 750px; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; max-width: 850px; }
         
         .header-container { text-align: center; margin-bottom: 20px; }
         .main-heading { color: #2c3e50; margin: 0; font-size: 1.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
         .sub-heading { color: #7f8c8d; font-size: 1.1rem; margin-top: 5px; font-weight: 400; }
 
+        /* Formula Box */
         .formula-box {
             background-color: #eef2ff;
             border: 2px solid #3f51b5;
@@ -44,17 +45,34 @@
         input { width: 100%; padding: 10px; border: 1px solid #ccd1d1; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
         input[readonly] { background-color: #f1f3f5; cursor: not-allowed; color: #495057; border: 1px solid #dee2e6; }
 
-        .result-box { 
-            margin-top: 25px; 
-            padding: 20px; 
-            background: #fff5f5;
-            border-radius: 8px; 
-            border: 2px solid #feb2b2;
-        }
+        .result-box { margin-top: 25px; padding: 20px; background: #fff5f5; border-radius: 8px; border: 2px solid #feb2b2; }
         .result-item { margin-bottom: 12px; font-size: 1.05rem; color: #2c3e50; display: flex; justify-content: space-between; align-items: center; }
         .highlight { font-weight: bold; color: #c53030; font-size: 1.7rem; }
         
-        .footer-note { font-size: 0.75rem; color: #a0aec0; margin-top: 20px; text-align: center; border-top: 1px solid #edf2f7; padding-top: 15px; }
+        /* Administration Section */
+        .admin-section { margin-top: 30px; border-top: 2px solid #2c3e50; padding-top: 20px; }
+        .admin-title { font-weight: bold; font-size: 1.1rem; color: #2c3e50; margin-bottom: 10px; text-decoration: underline; }
+        .admin-text { font-size: 0.95rem; color: #333; line-height: 1.6; margin-bottom: 20px; }
+
+        /* Max Dose Box */
+        .max-dose-box {
+            background-color: #fff5f7;
+            border: 2px solid #e53e3e;
+            color: #9b2c2c;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+        
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 15px; background-color: #fff; }
+        .admin-table th, .admin-table td { border: 1px solid #cbd5e0; padding: 10px; text-align: center; }
+        .admin-table th { background-color: #edf2f7; font-weight: bold; color: #2d3748; }
+        .admin-table tr td:first-child { font-weight: bold; text-align: left; background-color: #f8fafc; }
+
+        .footer-note { font-size: 0.75rem; color: #a0aec0; margin-top: 30px; text-align: center; border-top: 1px solid #edf2f7; padding-top: 15px; }
     </style>
 </head>
 <body>
@@ -109,12 +127,75 @@
     </div>
 
     <div id="results" class="result-box" style="display:none;">
-        <div class="result-item" style="border-top: 2px solid #feb2b2; padding-top: 15px; margin-top: 10px;">
+        <div class="result-item">
             <strong>Exact Iron Dose Calculated:</strong> 
             <span><span id="resExact" class="highlight">0</span> <span class="highlight">mg</span></span>
         </div>
         <div style="font-size: 0.85rem; color: #718096; text-align: right; margin-top: 5px; font-weight: 500;">
             The total dose can be rounded off to 100mg increments.
+        </div>
+    </div>
+
+    <div class="admin-section">
+        <div class="admin-title">Method of administration</div>
+        <div class="admin-text">
+            Iron Sucrose Similars (ISS) can be given either as slow IV injection (undiluted) or IV infusion which must only be diluted in sterile 0.9% sodium chloride solution (normal saline).
+        </div>
+
+        <div class="max-dose-box">
+            Intravenous infusion: Maximum single tolerated dose 7 mg/kg once a week (max 500 mg)
+        </div>
+        
+        <div style="font-size: 0.95rem; font-weight: bold; margin-bottom: 10px; color: #2d3748;">IV Iron Sucrose Similars (ISS) infusion guide:</div>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Dose</th>
+                    <th>100mg</th>
+                    <th>200mg</th>
+                    <th>300mg</th>
+                    <th>400mg</th>
+                    <th>500mg</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>No. of ampoules</td>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>5</td>
+                </tr>
+                <tr>
+                    <td>Administer over</td>
+                    <td>15 min</td>
+                    <td>30 min</td>
+                    <td>1.5 hours</td>
+                    <td>2.5 hours</td>
+                    <td>3.5 hours</td>
+                </tr>
+                <tr>
+                    <td>Min. dilution (0.9% NaCl)</td>
+                    <td>100ml</td>
+                    <td>200ml</td>
+                    <td>300ml</td>
+                    <td>400ml</td>
+                    <td>500ml</td>
+                </tr>
+                <tr>
+                    <td>Infusion rate</td>
+                    <td>133 gtt/min</td>
+                    <td>133 gtt/min</td>
+                    <td>67 gtt/min</td>
+                    <td>53 gtt/min</td>
+                    <td>48 gtt/min</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div style="background-color: #fffaf0; border: 1px solid #feebc8; padding: 15px; border-radius: 6px; margin-top: 20px; font-size: 0.9rem; color: #744210; text-align: center;">
+            <strong>Test Dose (for new patient):</strong> 20mg in 20ml over 15 minutes (infusion rate: 27 gtt/min)
         </div>
     </div>
 
@@ -137,7 +218,6 @@
             return;
         }
 
-        // 1. Calculate Iron Store based on weight threshold
         let ironStore = (weight < 35) ? (15 * weight) : 500;
         ironStoreInput.value = ironStore.toFixed(0);
 
@@ -148,13 +228,9 @@
 
         resultsDiv.style.display = 'block';
 
-        // 2. Ganzoni Formula Calculation
-        // Formula: weight * (13.0 - hb) * 2.4 + ironStore
         let rawDose = weight * (targetHb - hb) * 2.4 + ironStore;
-        
         if (rawDose < 0) rawDose = 0;
 
-        // Update UI with exact dose (formatted to 1 decimal place if not a whole number)
         document.getElementById('resExact').innerText = Number.isInteger(rawDose) ? rawDose.toLocaleString() : rawDose.toFixed(1);
     }
 </script>
