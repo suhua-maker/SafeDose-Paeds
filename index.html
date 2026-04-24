@@ -12,7 +12,6 @@
         .main-heading { color: #2c3e50; margin: 0; font-size: 1.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
         .sub-heading { color: #7f8c8d; font-size: 1.1rem; margin-top: 5px; font-weight: 400; }
 
-        /* Formula Box */
         .formula-box {
             background-color: #eef2ff;
             border: 2px solid #3f51b5;
@@ -49,12 +48,10 @@
         .result-item { margin-bottom: 12px; font-size: 1.05rem; color: #2c3e50; display: flex; justify-content: space-between; align-items: center; }
         .highlight { font-weight: bold; color: #c53030; font-size: 1.7rem; }
         
-        /* Administration Section */
         .admin-section { margin-top: 30px; border-top: 2px solid #2c3e50; padding-top: 20px; }
-        .admin-title { font-weight: bold; font-size: 1.1rem; color: #2c3e50; margin-bottom: 10px; text-decoration: underline; }
+        .admin-title { font-weight: bold; font-size: 1.1rem; color: #2c3e50; margin-bottom: 15px; text-decoration: underline; }
         .admin-text { font-size: 0.95rem; color: #333; line-height: 1.6; margin-bottom: 20px; }
 
-        /* Max Dose Box */
         .max-dose-box {
             background-color: #fff5f7;
             border: 2px solid #e53e3e;
@@ -66,13 +63,35 @@
             margin-bottom: 20px;
             font-size: 1rem;
         }
-        
-        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 15px; background-color: #fff; }
-        .admin-table th, .admin-table td { border: 1px solid #cbd5e0; padding: 10px; text-align: center; }
-        .admin-table th { background-color: #edf2f7; font-weight: bold; color: #2d3748; }
-        .admin-table tr td:first-child { font-weight: bold; text-align: left; background-color: #f8fafc; }
 
-        .footer-note { font-size: 0.75rem; color: #a0aec0; margin-top: 30px; text-align: center; border-top: 1px solid #edf2f7; padding-top: 15px; }
+        .test-dose-note {
+            background-color: #fffaf0;
+            border: 1px solid #feebc8;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            color: #744210;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background-color: #fff; margin-bottom: 30px; }
+        .admin-table th, .admin-table td { border: 1px solid #cbd5e0; padding: 12px; text-align: center; }
+        .admin-table th { background-color: #edf2f7; font-weight: bold; color: #2d3748; font-size: 0.9rem; }
+        .admin-table tr:nth-child(even) { background-color: #f8fafc; }
+
+        .reference-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #edf2f7;
+            font-size: 0.8rem;
+            color: #718096;
+            line-height: 1.6;
+        }
+        .ref-title { font-weight: bold; margin-bottom: 8px; color: #4a5568; font-size: 0.9rem; }
+
+        .footer-note { font-size: 0.75rem; color: #a0aec0; margin-top: 20px; text-align: center; }
     </style>
 </head>
 <body>
@@ -145,58 +164,36 @@
         <div class="max-dose-box">
             Intravenous infusion: Maximum single tolerated dose 7 mg/kg once a week (max 500 mg)
         </div>
+
+        <div class="test-dose-note">
+            Test Dose (for new patient): 20mg in 20ml over 15 minutes
+        </div>
         
-        <div style="font-size: 0.95rem; font-weight: bold; margin-bottom: 10px; color: #2d3748;">IV Iron Sucrose Similars (ISS) infusion guide:</div>
         <table class="admin-table">
             <thead>
                 <tr>
                     <th>Dose</th>
-                    <th>100mg</th>
-                    <th>200mg</th>
-                    <th>300mg</th>
-                    <th>400mg</th>
-                    <th>500mg</th>
+                    <th>No of ampoules</th>
+                    <th>Administer over</th>
+                    <th>Minimum dilution volume of 0.9%NaCl</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>No. of ampoules</td>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>4</td>
-                    <td>5</td>
-                </tr>
-                <tr>
-                    <td>Administer over</td>
-                    <td>15 min</td>
-                    <td>30 min</td>
-                    <td>1.5 hours</td>
-                    <td>2.5 hours</td>
-                    <td>3.5 hours</td>
-                </tr>
-                <tr>
-                    <td>Min. dilution (0.9% NaCl)</td>
-                    <td>100ml</td>
-                    <td>200ml</td>
-                    <td>300ml</td>
-                    <td>400ml</td>
-                    <td>500ml</td>
-                </tr>
-                <tr>
-                    <td>Infusion rate</td>
-                    <td>133 gtt/min</td>
-                    <td>133 gtt/min</td>
-                    <td>67 gtt/min</td>
-                    <td>53 gtt/min</td>
-                    <td>48 gtt/min</td>
-                </tr>
+                <tr><td>100mg</td><td>1</td><td>15 min</td><td>100ml</td></tr>
+                <tr><td>200mg</td><td>2</td><td>30 min</td><td>200ml</td></tr>
+                <tr><td>300mg</td><td>3</td><td>1.5 hours</td><td>300ml</td></tr>
+                <tr><td>400mg</td><td>4</td><td>2.5 hours</td><td>400ml</td></tr>
+                <tr><td>500mg</td><td>5</td><td>3.5 hours</td><td>500ml</td></tr>
             </tbody>
         </table>
-        
-        <div style="background-color: #fffaf0; border: 1px solid #feebc8; padding: 15px; border-radius: 6px; margin-top: 20px; font-size: 0.9rem; color: #744210; text-align: center;">
-            <strong>Test Dose (for new patient):</strong> 20mg in 20ml over 15 minutes (infusion rate: 27 gtt/min)
-        </div>
+    </div>
+
+    <div class="reference-section">
+        <div class="ref-title">References:</div>
+        1) Bahagian Pembangunan Kesihatan Keluarga 2026. Consensus Guidelines on Parenteral lron Usage for Pregnant Women at Primary Care Facilities.<br>
+        2) Pavord S, Daru J, Prasannan N, Robinson S, Stanworth S, Girling J, BSH Committee. UK guidelines on the management of iron deficiency in pregnancy. Br J Haematol. 2020.<br>
+        3) Lucas S, Garg M. lntravenous iron: an update. lnternal Medicine Journal. 2024 Jan;54(1).26-34.<br>
+        4) Product Leaflet Ranofer Injection 10mg/5ml. Revision Date: 9 April 2019.
     </div>
 
     <div class="footer-note">
@@ -227,7 +224,6 @@
         }
 
         resultsDiv.style.display = 'block';
-
         let rawDose = weight * (targetHb - hb) * 2.4 + ironStore;
         if (rawDose < 0) rawDose = 0;
 
