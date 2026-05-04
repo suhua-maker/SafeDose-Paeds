@@ -22,7 +22,7 @@
         .btn-calculate:hover { background: #004494; }
 
         .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; }
-        <table> { width: 100%; border-collapse: collapse; min-width: 1350px; }
+        table { width: 100%; border-collapse: collapse; min-width: 1350px; }
         th { background: var(--primary); color: white; padding: 15px; text-align: left; font-size: 11px; text-transform: uppercase; position: sticky; top: 0; letter-spacing: 0.5px; }
         td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #1e293b; vertical-align: top; }
         tr:nth-child(even) { background: #f8fafc; }
@@ -103,12 +103,13 @@
         { id: "pred_syr", name: "Prednisolone Syrup", str: "2.5mg/5mL", range: "FUKKM\nCHILD: 0.5 - 2 mg/kg/day in divided doses every 6 - 8 hours or as a single daily", mg: 2.5, ml: 5, freq: "OD", note: "-" },
         { id: "lactulose", name: "Lactulose", str: "3.3g/5ml", range: "FUKKM\nCHILD 0.5 ml/kg/dose once or twice daily.", mg: 3300, ml: 5, freq: "OD/BD", note: "-" },
         { id: "amox_syr_tonsil", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Tonsilitis/Pharyngitis</span>\nNAG 25mg/kg BD x 10 days (max 1000mg BD)", mg: 250, ml: 5, freq: "BD", note: "Complete course of 10 days." },
-        { id: "amox_syr_pneumo_bd", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Pneumonia</span>\nNAG 40mg/kg bd x 5-7 days (max 1000mg BD)", mg: 250, ml: 5, freq: "BD", note: "-" },
+        { id: "amox_syr_pneumo_bd", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Pneumonia (BD)</span>\nNAG 40mg/kg bd x 5-7 days (max 1000mg BD)", mg: 250, ml: 5, freq: "BD", note: "-" },
         { id: "amox_syr_pneumo_tds", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Pneumonia (TDS)</span>\nNAG 30mg/kg tds x 5-7 days (max 1000mg tds)", mg: 250, ml: 5, freq: "TDS", note: "-" },
         { id: "amox_syr_otitis", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Otitis Media</span>\nNAG NAG Amoxicillin 80-90mg/kg/day (max 1500mg BD)", mg: 250, ml: 5, freq: "BD", note: "Duration:\n< 2yrs: 7 - 10 days\n> 2yrs: 5 - 7 days" },
         { id: "amox_syr_standard", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>15mg/kg</span>\nStandard indication dosing", mg: 250, ml: 5, freq: "TDS", note: "Indication(s): Dental procedure, Balanitis, Lymphadenitis" },
         { id: "cepha_syr", name: "Cephalexin Syrup", str: "125mg / 5ml", range: "NAG 25-50mg/kg/day (max 1000mg BD)", mg: 125, ml: 5, freq: "BD", note: "-" },
-        { id: "cloxa_syr", name: "Cloxacillin Syrup", str: "125mg / 5ml", range: "NAG 50-100mg/kg/day PO in 4 divided doses (max. 250mg QID)", mg: 125, ml: 5, freq: "QID", note: "-" }
+        { id: "cloxa_syr", name: "Cloxacillin Syrup", str: "125mg / 5ml", range: "NAG 50-100mg/kg/day PO in 4 divided doses (max. 250mg QID)", mg: 125, ml: 5, freq: "QID", note: "-" },
+        { id: "erythro_syr", name: "Erythromycin Syrup", str: "400mg / 5ml", range: "NAG Erythromycin 30-50mg/kg/day in 2 divided doses\n(For Tonsilitis/Pharyngitis & Otitis Media with Severe Allergy)", mg: 400, ml: 5, freq: "BD", note: "Tonsillitis Duration: 10 days." }
     ];
 
     function init() {
@@ -248,6 +249,12 @@
                 finalMg = mgVal.toFixed(1) + " mg";
                 finalMl = (mgVal * 5 / 125).toFixed(2) + " mL";
                 ruleText = "Formula: 15mg/kg QID (Max 250mg)";
+            }
+            else if (med.id === "erythro_syr") {
+                let mgVal = Math.min(800, (20 * w));
+                finalMg = mgVal.toFixed(1) + " mg";
+                finalMl = (mgVal * 5 / 400).toFixed(2) + " mL";
+                ruleText = "Formula: 20mg/kg BD (Max 800mg)";
             }
 
             const mgEl = document.getElementById(`mg-${med.id}`);
