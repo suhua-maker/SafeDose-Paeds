@@ -111,7 +111,9 @@
         { id: "cloxa_syr", name: "Cloxacillin Syrup", str: "125mg / 5ml", range: "NAG 50-100mg/kg/day PO in 4 divided doses (max. 250mg QID)", mg: 125, ml: 5, freq: "QID", note: "-" },
         { id: "erythro_syr", name: "Erythromycin Syrup", str: "400mg / 5ml", range: "NAG Erythromycin 30-50mg/kg/day in 2 divided doses\n(For Tonsilitis/Pharyngitis & Otitis Media with Severe Allergy)", mg: 400, ml: 5, freq: "BD", note: "Tonsillitis Duration: 10 days." },
         { id: "nystatin", name: "Nystatin Syrup", str: "100,000IU/ml", range: "< 12 months: 100,000 IU\n> 12 months: 500,000 IU", mg: 0, ml: 1, freq: "QID", note: "-" },
-        { id: "augmentin_228", name: "Amoxycillin + Clavulanic Acid (Augmentin)", str: "228mg/5ml", range: "20mg/kg BD\n\n<span class='subtitle-box'>Otitis Media</span>\nFormulation 14:1 (80-90mg/kg/day in 2 doses)\nFormulation 7:1 (40-45mg/kg/day in 2 doses)\n(max 3g/day)", mg: 228, ml: 5, freq: "BD", note: "-" }
+        { id: "augmentin_228", name: "Amoxycillin + Clavulanic Acid (Augmentin)", str: "228mg/5ml", range: "20mg/kg BD\n\n<span class='subtitle-box'>Otitis Media</span>\nFormulation 14:1 (80-90mg/kg/day in 2 doses)\nFormulation 7:1 (40-45mg/kg/day in 2 doses)\n(max 3g/day)", mg: 228, ml: 5, freq: "BD", note: "-" },
+        { id: "isoniazid", name: "Isoniazid", str: "40mg/ml", range: "<span class='subtitle-box'>CPG TB</span>\n< 10 yo: 10mg/kg/day\n=> 10 yo: 5mg/kg/day\n(Maximum 300mg)", mg: 40, ml: 1, freq: "OD", note: "-" },
+        { id: "rifampicin", name: "Rifampicin", str: "50mg/ml", range: "<span class='subtitle-box'>CPG TB</span>\n< 10 yo: 15mg/kg/day\n=> 10 yo: 10mg/kg/day\n(Maximum 600mg)", mg: 50, ml: 1, freq: "OD", note: "-" }
     ];
 
     function init() {
@@ -272,6 +274,18 @@
                 finalMg = mgVal.toFixed(1) + " mg";
                 finalMl = mlVal.toFixed(2) + " mL";
                 ruleText = "Formula: 20mg/kg BD (Max 1500mg)";
+            }
+            else if (med.id === "isoniazid") {
+                let mgVal = Math.min(300, (y < 10 ? 10 * w : 5 * w));
+                finalMg = mgVal.toFixed(1) + " mg";
+                finalMl = (mgVal / 40).toFixed(2) + " mL";
+                ruleText = y < 10 ? "Age < 10 (10mg/kg)" : "Age >= 10 (5mg/kg)";
+            }
+            else if (med.id === "rifampicin") {
+                let mgVal = Math.min(600, (y < 10 ? 15 * w : 10 * w));
+                finalMg = mgVal.toFixed(1) + " mg";
+                finalMl = (mgVal / 50).toFixed(2) + " mL";
+                ruleText = y < 10 ? "Age < 10 (15mg/kg)" : "Age >= 10 (10mg/kg)";
             }
 
             const mgEl = document.getElementById(`mg-${med.id}`);
