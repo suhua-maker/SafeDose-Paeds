@@ -80,7 +80,7 @@
                     <th style="width: 15%">Medication Name</th>
                     <th style="width: 10%">Strength</th>
                     <th style="width: 25%">Dose Range</th>
-                    <th style="width: 13%">RECOMMENDED DOSE (MG)</th>
+                    <th style="width: 13%">RECOMMENDED DOSE (MG/IU)</th>
                     <th style="width: 13%">RECOMMENDED DOSE (ML)</th>
                     <th style="width: 10%">FREQUENCY</th>
                     <th>Notes</th>
@@ -109,7 +109,8 @@
         { id: "amox_syr_standard", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>15mg/kg</span>\nStandard indication dosing", mg: 250, ml: 5, freq: "TDS", note: "Indication(s): Dental procedure, Balanitis, Lymphadenitis" },
         { id: "cepha_syr", name: "Cephalexin Syrup", str: "125mg / 5ml", range: "NAG 25-50mg/kg/day (max 1000mg BD)", mg: 125, ml: 5, freq: "BD", note: "-" },
         { id: "cloxa_syr", name: "Cloxacillin Syrup", str: "125mg / 5ml", range: "NAG 50-100mg/kg/day PO in 4 divided doses (max. 250mg QID)", mg: 125, ml: 5, freq: "QID", note: "-" },
-        { id: "erythro_syr", name: "Erythromycin Syrup", str: "400mg / 5ml", range: "NAG Erythromycin 30-50mg/kg/day in 2 divided doses\n(For Tonsilitis/Pharyngitis & Otitis Media with Severe Allergy)", mg: 400, ml: 5, freq: "BD", note: "Tonsillitis Duration: 10 days." }
+        { id: "erythro_syr", name: "Erythromycin Syrup", str: "400mg / 5ml", range: "NAG Erythromycin 30-50mg/kg/day in 2 divided doses\n(For Tonsilitis/Pharyngitis & Otitis Media with Severe Allergy)", mg: 400, ml: 5, freq: "BD", note: "Tonsillitis Duration: 10 days." },
+        { id: "nystatin", name: "Nystatin Syrup", str: "100,000IU/ml", range: "< 12 months: 100,000 IU\n> 12 months: 500,000 IU", mg: 0, ml: 1, freq: "QID", note: "-" }
     ];
 
     function init() {
@@ -139,6 +140,7 @@
     function runCalc() {
         const w = parseFloat(document.getElementById('wt').value) || 0;
         const y = parseFloat(document.getElementById('ageY').value) || 0;
+        const m = parseFloat(document.getElementById('ageM').value) || 0;
 
         if (w <= 0) { alert("Please key in weight first!"); return; }
 
@@ -255,6 +257,17 @@
                 finalMg = mgVal.toFixed(1) + " mg";
                 finalMl = (mgVal * 5 / 400).toFixed(2) + " mL";
                 ruleText = "Formula: 20mg/kg BD (Max 800mg)";
+            }
+            else if (med.id === "nystatin") {
+                if (y < 1 && m < 12) {
+                    finalMg = "100,000 IU";
+                    finalMl = "1.00 mL";
+                    ruleText = "Age < 12 months";
+                } else {
+                    finalMg = "500,000 IU";
+                    finalMl = "5.00 mL";
+                    ruleText = "Age >= 12 months";
+                }
             }
 
             const mgEl = document.getElementById(`mg-${med.id}`);
