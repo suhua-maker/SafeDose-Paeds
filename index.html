@@ -102,18 +102,19 @@
         { id: "brom_syr", name: "Bromhexine Syrup", str: "4mg/5mL", range: "FUKKM\nWeight: 0.3mg/kg/day 8 hourly\nAge: 6-12y: 4mg TDS; 2-6y: 2mg TDS; <2y: 1mg TDS", mg: 4, ml: 5, freq: "TDS", note: "-" },
         { id: "pred_syr", name: "Prednisolone Syrup", str: "2.5mg/5mL", range: "FUKKM\nCHILD: 0.5 - 2 mg/kg/day in divided doses every 6 - 8 hours or as a single daily", mg: 2.5, ml: 5, freq: "OD", note: "-" },
         { id: "lactulose", name: "Lactulose", str: "3.3g/5ml", range: "FUKKM\nCHILD 0.5 ml/kg/dose once or twice daily.", mg: 3300, ml: 5, freq: "OD/BD", note: "-" },
+        { id: "amox_syr_tonsil", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Tonsilitis/Pharyngitis</span>\nNAG 25mg/kg BD x 10 days (max 1000mg BD)", mg: 250, ml: 5, freq: "BD", note: "Complete course of 10 days." },
+        { id: "amox_syr_pneumo_bd", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Pneumonia (BD)</span>\nNAG 40mg/kg bd x 5-7 days (max 1000mg BD)", mg: 250, ml: 5, freq: "BD", note: "-" },
+        { id: "amox_syr_pneumo_tds", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Pneumonia (TDS)</span>\nNAG 30mg/kg tds x 5-7 days (max 1000mg tds)", mg: 250, ml: 5, freq: "TDS", note: "-" },
         { 
-            id: "amox_syr_tonsil", 
+            id: "amox_syr_otitis", 
             name: "Amoxycillin Syrup", 
             str: "250mg / 5ml", 
-            range: "<span class='subtitle-box'>Tonsilitis/Pharyngitis</span>\nNAG 25mg/kg BD x 10 days (max 1000mg BD)", 
+            range: "<span class='subtitle-box'>Otitis Media</span>\nNAG Amoxicillin 80-90mg/kg/day (max. 3g/day) in 2 divided doses", 
             mg: 250, 
             ml: 5, 
             freq: "BD", 
-            note: "Complete course of 10 days." 
-        },
-        { id: "amox_syr_pneumo_bd", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Pneumonia</span>\nNAG 40mg/kg bd x 5-7 days (max 1000mg BD)", mg: 250, ml: 5, freq: "BD", note: "-" },
-        { id: "amox_syr_pneumo_tds", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Pneumonia (TDS)</span>\nNAG 30mg/kg tds x 5-7 days (max 1000mg tds)", mg: 250, ml: 5, freq: "TDS", note: "-" }
+            note: "Duration:\n< 2yrs: 7 - 10 days\n> 2yrs: 5 - 7 days" 
+        }
     ];
 
     function init() {
@@ -212,7 +213,6 @@
                 ruleText = "Formula: 0.5mL/kg (Max 15mL)";
             }
             else if (med.id === "amox_syr_tonsil") {
-                // Updated max to 1000mg (20mL) per updated NAG request
                 let mgVal = Math.min(1000, (25 * w));
                 finalMg = mgVal.toFixed(1) + " mg";
                 finalMl = (mgVal * 5 / 250).toFixed(2) + " mL";
@@ -230,6 +230,12 @@
                 finalMg = mgVal.toFixed(1) + " mg";
                 finalMl = mlVal.toFixed(2) + " mL";
                 ruleText = "Formula: 30mg/kg (Max 1000mg)";
+            }
+            else if (med.id === "amox_syr_otitis") {
+                let mgVal = Math.min(1500, (40 * w));
+                finalMg = mgVal.toFixed(1) + " mg";
+                finalMl = (mgVal * 5 / 250).toFixed(2) + " mL";
+                ruleText = "Formula: 40mg/kg BD (Max 1500mg)";
             }
 
             const mgEl = document.getElementById(`mg-${med.id}`);
