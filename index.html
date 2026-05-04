@@ -105,17 +105,9 @@
         { id: "amox_syr_tonsil", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Tonsilitis/Pharyngitis</span>\nNAG 25mg/kg BD x 10 days (max 1000mg BD)", mg: 250, ml: 5, freq: "BD", note: "Complete course of 10 days." },
         { id: "amox_syr_pneumo_bd", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Pneumonia</span>\nNAG 40mg/kg bd x 5-7 days (max 1000mg BD)", mg: 250, ml: 5, freq: "BD", note: "-" },
         { id: "amox_syr_pneumo_tds", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Pneumonia (TDS)</span>\nNAG 30mg/kg tds x 5-7 days (max 1000mg tds)", mg: 250, ml: 5, freq: "TDS", note: "-" },
-        { id: "amox_syr_otitis", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Otitis Media</span>\nNAG NAG Amoxicillin 80-90mg/kg/day (max 1500mg BD)", mg: 250, ml: 5, freq: "BD", note: "Duration:\n< 2yrs: 7 - 10 days\n> 2yrs: 5 - 7 days" },
-        { 
-            id: "amox_syr_standard", 
-            name: "Amoxycillin Syrup", 
-            str: "250mg / 5ml", 
-            range: "<span class='subtitle-box'>15mg/kg</span>\nStandard indication dosing", 
-            mg: 250, 
-            ml: 5, 
-            freq: "TDS", 
-            note: "Indication(s): Dental procedure, Balanitis, Lymphadenitis" 
-        }
+        { id: "amox_syr_otitis", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>Otitis Media</span>\nNAG Amoxicillin 80-90mg/kg/day (max 1500mg BD)", mg: 250, ml: 5, freq: "BD", note: "Duration:\n< 2yrs: 7 - 10 days\n> 2yrs: 5 - 7 days" },
+        { id: "amox_syr_standard", name: "Amoxycillin Syrup", str: "250mg / 5ml", range: "<span class='subtitle-box'>15mg/kg</span>\nStandard indication dosing", mg: 250, ml: 5, freq: "TDS", note: "Indication(s): Dental procedure, Balanitis, Lymphadenitis" },
+        { id: "cepha_syr", name: "Cephalexin Syrup", str: "125mg / 5ml", range: "NAG 25-50mg/kg/day (max 1000mg BD)", mg: 125, ml: 5, freq: "BD", note: "-" }
     ];
 
     function init() {
@@ -243,6 +235,12 @@
                 finalMg = mgVal.toFixed(1) + " mg";
                 finalMl = (mgVal * 5 / 250).toFixed(2) + " mL";
                 ruleText = "Formula: 15mg/kg TDS (Max 500mg)";
+            }
+            else if (med.id === "cepha_syr") {
+                let mgVal = Math.min(1000, (25 * w));
+                finalMg = mgVal.toFixed(1) + " mg";
+                finalMl = (mgVal * 5 / 125).toFixed(2) + " mL";
+                ruleText = "Formula: 25mg/kg BD (Max 1000mg)";
             }
 
             const mgEl = document.getElementById(`mg-${med.id}`);
