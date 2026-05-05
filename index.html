@@ -113,7 +113,17 @@
         { id: "nystatin", name: "Nystatin Syrup", str: "100,000IU/ml", range: "< 12 months: 100,000 IU\n> 12 months: 500,000 IU", mg: 0, ml: 1, freq: "QID", note: "-" },
         { id: "augmentin_228", name: "Amoxycillin + Clavulanic Acid (Augmentin)", str: "228mg/5ml", range: "20mg/kg BD\n\n<span class='subtitle-box'>Otitis Media</span>\nFormulation 14:1 (80-90mg/kg/day in 2 doses)\nFormulation 7:1 (40-45mg/kg/day in 2 doses)\n(max 3g/day)", mg: 228, ml: 5, freq: "BD", note: "-" },
         { id: "isoniazid", name: "Isoniazid", str: "40mg/ml", range: "<span class='subtitle-box'>CPG TB</span>\n< 10 yo: 10mg/kg/day\n=> 10 yo: 5mg/kg/day\n(Maximum 300mg)", mg: 40, ml: 1, freq: "OD", note: "-" },
-        { id: "rifampicin", name: "Rifampicin", str: "50mg/ml", range: "<span class='subtitle-box'>CPG TB</span>\n< 10 yo: 15mg/kg/day\n=> 10 yo: 10mg/kg/day\n(Maximum 600mg)", mg: 50, ml: 1, freq: "OD", note: "-" }
+        { id: "rifampicin", name: "Rifampicin", str: "50mg/ml", range: "<span class='subtitle-box'>CPG TB</span>\n< 10 yo: 15mg/kg/day\n=> 10 yo: 10mg/kg/day\n(Maximum 600mg)", mg: 50, ml: 1, freq: "OD", note: "-" },
+        { 
+            id: "oseltamivir", 
+            name: "Oseltamivir suspension", 
+            str: "60mg/5ml", 
+            range: "<b>a) 1-12 years old</b>\n10-15kg: 30mg; >15-23kg: 45mg; \n>23-40kg: 60mg; >40kg: 75mg\n<b>b) 6-12 months</b>\n3mg/kg", 
+            mg: 60, 
+            ml: 5, 
+            freq: "BD", 
+            note: "-" 
+        }
     ];
 
     function init() {
@@ -286,6 +296,25 @@
                 finalMg = mgVal.toFixed(1) + " mg";
                 finalMl = (mgVal / 50).toFixed(2) + " mL";
                 ruleText = y < 10 ? "Age < 10 (15mg/kg)" : "Age >= 10 (10mg/kg)";
+            }
+            else if (med.id === "oseltamivir") {
+                let mgVal = 0;
+                if (y >= 1 && y <= 12) {
+                    if (w < 10) mgVal = 3 * w;
+                    else if (w <= 15) mgVal = 30;
+                    else if (w <= 23) mgVal = 45;
+                    else if (w <= 40) mgVal = 60;
+                    else mgVal = 75;
+                    ruleText = "Age 1-12y (Weight band)";
+                } else if (mAge >= 6 || (y < 1 && y >= 0.5)) {
+                    mgVal = 3 * w;
+                    ruleText = "Age 6-12m (3mg/kg)";
+                } else {
+                    mgVal = 3 * w;
+                    ruleText = "Fallback (3mg/kg)";
+                }
+                finalMg = mgVal.toFixed(1) + " mg";
+                finalMl = (mgVal * 5 / 60).toFixed(2) + " mL";
             }
 
             const mgEl = document.getElementById(`mg-${med.id}`);
