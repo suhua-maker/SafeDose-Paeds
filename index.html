@@ -114,16 +114,8 @@
         { id: "augmentin_228", name: "Amoxycillin + Clavulanic Acid (Augmentin)", str: "228mg/5ml", range: "20mg/kg BD\n\n<span class='subtitle-box'>Otitis Media</span>\nFormulation 14:1 (80-90mg/kg/day in 2 doses)\nFormulation 7:1 (40-45mg/kg/day in 2 doses)\n(max 3g/day)", mg: 228, ml: 5, freq: "BD", note: "-" },
         { id: "isoniazid", name: "Isoniazid", str: "40mg/ml", range: "<span class='subtitle-box'>CPG TB</span>\n< 10 yo: 10mg/kg/day\n=> 10 yo: 5mg/kg/day\n(Maximum 300mg)", mg: 40, ml: 1, freq: "OD", note: "-" },
         { id: "rifampicin", name: "Rifampicin", str: "50mg/ml", range: "<span class='subtitle-box'>CPG TB</span>\n< 10 yo: 15mg/kg/day\n=> 10 yo: 10mg/kg/day\n(Maximum 600mg)", mg: 50, ml: 1, freq: "OD", note: "-" },
-        { 
-            id: "oseltamivir", 
-            name: "Oseltamivir suspension", 
-            str: "60mg/5ml", 
-            range: "<b>a) 1-12 years old</b>\n10-15kg: 30mg; >15-23kg: 45mg; \n>23-40kg: 60mg; >40kg: 75mg\n<b>b) 6-12 months</b>\n3mg/kg", 
-            mg: 60, 
-            ml: 5, 
-            freq: "BD", 
-            note: "-" 
-        }
+        { id: "oseltamivir", name: "Oseltamivir suspension", str: "60mg/5ml", range: "<b>a) 1-12 years old</b>\n10-15kg: 30mg; >15-23kg: 45mg; \n>23-40kg: 60mg; >40kg: 75mg\n<b>b) 6-12 months</b>\n3mg/kg", mg: 60, ml: 5, freq: "BD", note: "-" },
+        { id: "maltofer", name: "Maltofer", str: "10mg/ml", range: "<b>Prophylaxis</b>\n4mg/kg/day\n\n<b>Product Leaflet:</b>\nInfants <1y: Not indicated\nChildren(1-12y): 2.5-5.0ml\n>12y: 5-10ml", mg: 0, ml: 0, freq: "OD", note: "-" }
     ];
 
     function init() {
@@ -316,13 +308,23 @@
                 finalMg = mgVal.toFixed(1) + " mg";
                 finalMl = (mgVal * 5 / 60).toFixed(2) + " mL";
             }
+            else if (med.id === "maltofer") {
+                finalMg = "-";
+                if (y < 1 && mAge < 12) {
+                    finalMl = "Not Indicated"; ruleText = "Age < 1yr";
+                } else if (y <= 12) {
+                    finalMl = Math.min(4 * w / 10, 5).toFixed(2) + " mL"; ruleText = "Age 1-12y (Max 5mL)";
+                } else {
+                    finalMl = Math.min(4 * w / 10, 10).toFixed(2) + " mL"; ruleText = "Age > 12y (Max 10mL)";
+                }
+            }
 
             const mgEl = document.getElementById(`mg-${med.id}`);
             const mlEl = document.getElementById(`ml-${med.id}`);
             mgEl.innerHTML = finalMg;
             mlEl.innerHTML = finalMl;
             
-            if (finalMg.includes("CONTRA")) {
+            if (finalMg.includes("CONTRA") || finalMl === "Not Indicated") {
                 mgEl.classList.add("contra"); mlEl.classList.add("contra");
             } else {
                 mgEl.classList.remove("contra"); mlEl.classList.remove("contra");
